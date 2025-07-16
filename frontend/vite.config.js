@@ -9,4 +9,12 @@ export default defineConfig({
       '/api': 'http://localhost:5001',
     },
   },
+  build: {
+    rollupOptions: {
+      external: ['crypto'],
+    },
+  },
+  define: {
+    global: 'globalThis',
+  },
 })
