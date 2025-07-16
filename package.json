@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd frontend && npm install && npm run build",
-    "start": "npx @hexlet/chat-server -s ./frontend/dist -p $${PORT:-5001}"
+    "start": "npx @hexlet/chat-server -s ./frontend/dist -p $PORT -a 0.0.0.0",
+    "health": "node health.js"
   },
   "repository": {
     "type": "git",
