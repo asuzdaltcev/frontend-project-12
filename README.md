@@ -24,8 +24,8 @@ make start
 5. Configure the service:
    - **Name**: chat-app
    - **Environment**: Node
-   - **Build Command**: `make build`
-   - **Start Command**: `make start`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
    - **Plan**: Free
 
 The application will be available at your Render URL.

@@ -3,8 +3,8 @@ services:
     name: chat-app
     env: node
     plan: free
-    buildCommand: make build
-    startCommand: make start
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production 
