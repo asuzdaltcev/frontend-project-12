@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
 
 const Login = () => {
+  const [authError, setAuthError] = useState(null);
+  const navigate = useNavigate();
+
   // Схема валидации для формы
   const validationSchema = Yup.object({
     username: Yup.string()
@@ -15,10 +20,23 @@ const Login = () => {
   });
 
   // Обработчик отправки формы
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log('Форма отправлена:', values);
-    // TODO: Здесь будет логика авторизации
-    setSubmitting(false);
+  const handleSubmit = async (values, { setSubmitting }) => {
+    setAuthError(null);
+    try {
+      const response = await axios.post('/api/v1/login', values);
+      const { token, username } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('username', username);
+      navigate('/');
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        setAuthError('Неверное имя пользователя или пароль');
+      } else {
+        setAuthError('Ошибка авторизации. Попробуйте позже.');
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -26,7 +44,7 @@ const Login = () => {
       <div className="login-container">
         <h1>Вход в чат</h1>
         <p>Введите свои данные для авторизации</p>
-        
+        {authError && <div className="error-message" style={{ textAlign: 'center', marginBottom: 10 }}>{authError}</div>}
         <Formik
           initialValues={{ username: '', password: '' }}
           validationSchema={validationSchema}

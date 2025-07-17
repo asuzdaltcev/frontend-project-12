@@ -4,6 +4,7 @@ import Navigation from './components/Navigation';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
+import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
 function App() {
@@ -13,7 +14,11 @@ function App() {
         <Navigation />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            } />
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -23,4 +28,4 @@ function App() {
   );
 }
 
-export default App
+export default App;
