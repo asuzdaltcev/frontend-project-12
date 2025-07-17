@@ -1,31 +1,29 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 
 const Navigation = () => {
   const location = useLocation();
 
   return (
-    <nav className="navigation">
-      <div className="nav-container">
-        <Link to="/" className="nav-logo">
+    <Navbar bg="light" expand="md" className="mb-4 shadow-sm">
+      <Container>
+        <Navbar.Brand as={Link} to="/">
           💬 Chat App
-        </Link>
-        <div className="nav-links">
-          <Link 
-            to="/" 
-            className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-          >
-            Главная
-          </Link>
-          <Link 
-            to="/login" 
-            className={`nav-link ${location.pathname === '/login' ? 'active' : ''}`}
-          >
-            Войти
-          </Link>
-        </div>
-      </div>
-    </nav>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="main-navbar-nav" />
+        <Navbar.Collapse id="main-navbar-nav">
+          <Nav className="ms-auto">
+            <Nav.Link as={Link} to="/" active={location.pathname === '/'}>
+              Главная
+            </Nav.Link>
+            <Nav.Link as={Link} to="/login" active={location.pathname === '/login'}>
+              Войти
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 

@@ -1,18 +1,21 @@
 import React from 'react';
+import { ListGroup } from 'react-bootstrap';
 
 const ChannelList = ({ channels, currentChannelId, onChannelSelect }) => {
   return (
-    <div className="channel-list">
+    <ListGroup variant="flush" className="channel-list">
       {channels.map(channel => (
-        <div
+        <ListGroup.Item
           key={channel.id}
-          className={`channel-item ${channel.id === currentChannelId ? 'active' : ''}`}
+          action
+          active={channel.id === currentChannelId}
           onClick={() => onChannelSelect(channel.id)}
+          className="d-flex align-items-center"
         >
           <span className="channel-name"># {channel.name}</span>
-        </div>
+        </ListGroup.Item>
       ))}
-    </div>
+    </ListGroup>
   );
 };
 

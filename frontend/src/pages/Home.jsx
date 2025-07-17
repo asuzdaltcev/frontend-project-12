@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchChannels } from '../slices/channelsSlice';
 import { fetchMessages } from '../slices/messagesSlice';
 import ChatInterface from '../components/ChatInterface';
+import { Container, Alert, Spinner } from 'react-bootstrap';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -10,26 +11,29 @@ const Home = () => {
   const { messages, loading: messagesLoading, error: messagesError } = useSelector(state => state.messages);
 
   useEffect(() => {
-    // Загружаем данные при монтировании компонента
     dispatch(fetchChannels());
     dispatch(fetchMessages());
   }, [dispatch]);
 
   if (channelsLoading || messagesLoading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner">Загрузка чата...</div>
-      </div>
+      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Загрузка чата...</span>
+        </Spinner>
+      </Container>
     );
   }
 
   if (channelsError || messagesError) {
     return (
-      <div className="error-container">
-        <h2>Ошибка загрузки данных</h2>
-        <p>{channelsError || messagesError}</p>
-        <button onClick={() => window.location.reload()}>Обновить страницу</button>
-      </div>
+      <Container className="py-5">
+        <Alert variant="danger" className="text-center">
+          <h4>Ошибка загрузки данных</h4>
+          <div>{channelsError || messagesError}</div>
+          <button className="btn btn-danger mt-3" onClick={() => window.location.reload()}>Обновить страницу</button>
+        </Alert>
+      </Container>
     );
   }
 

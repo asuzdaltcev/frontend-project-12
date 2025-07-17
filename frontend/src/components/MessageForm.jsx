@@ -1,8 +1,9 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { addMessage } from '../slices/messagesSlice';
+import { Form, Button, InputGroup, Spinner } from 'react-bootstrap';
 
 const MessageForm = ({ channelId }) => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const MessageForm = ({ channelId }) => {
       await dispatch(addMessage({ body: values.body, channelId })).unwrap();
       resetForm();
     } catch (error) {
-      console.error('Ошибка отправки сообщения:', error);
+      // Можно добавить Alert
     } finally {
       setSubmitting(false);
     }
@@ -33,7 +34,7 @@ const MessageForm = ({ channelId }) => {
 
   if (!channelId) {
     return (
-      <div className="message-form disabled">
+      <div className="message-form disabled text-center text-muted py-3">
         <p>Выберите канал для отправки сообщения</p>
       </div>
     );
@@ -47,25 +48,27 @@ const MessageForm = ({ channelId }) => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="form">
-            <div className="form-group">
+          <FormikForm as={Form} className="form d-flex gap-2 align-items-end">
+            <InputGroup>
               <Field
-                as="textarea"
+                as={Form.Control}
                 name="body"
                 placeholder="Введите сообщение..."
                 className="message-input"
-                rows="3"
+                rows="2"
+                disabled={isSubmitting}
               />
-              <ErrorMessage name="body" component="div" className="error-message" />
-            </div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="send-button"
-            >
-              {isSubmitting ? 'Отправка...' : 'Отправить'}
-            </button>
-          </Form>
+              <Button
+                variant="primary"
+                type="submit"
+                disabled={isSubmitting}
+                className="send-button"
+              >
+                {isSubmitting ? <Spinner animation="border" size="sm" /> : 'Отправить'}
+              </Button>
+            </InputGroup>
+            <ErrorMessage name="body" component={Form.Text} className="text-danger" />
+          </FormikForm>
         )}
       </Formik>
     </div>

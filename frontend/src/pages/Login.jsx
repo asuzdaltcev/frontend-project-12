@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
 const Login = () => {
   const [authError, setAuthError] = useState(null);
@@ -40,54 +41,54 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <h1>Вход в чат</h1>
-        <p>Введите свои данные для авторизации</p>
-        {authError && <div className="error-message" style={{ textAlign: 'center', marginBottom: 10 }}>{authError}</div>}
-        <Formik
-          initialValues={{ username: '', password: '' }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting }) => (
-            <Form className="login-form">
-              <div className="form-group">
-                <label htmlFor="username">Имя пользователя</label>
-                <Field
-                  type="text"
-                  id="username"
-                  name="username"
-                  placeholder="Введите имя пользователя"
-                  className="form-input"
-                />
-                <ErrorMessage name="username" component="div" className="error-message" />
-              </div>
+    <Container className="login-page d-flex align-items-center justify-content-center" style={{ minHeight: '70vh' }}>
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} md={6} lg={4} className="login-container p-4 bg-white rounded shadow">
+          <h1 className="text-center mb-3">Вход в чат</h1>
+          <p className="text-center text-muted mb-4">Введите свои данные для авторизации</p>
+          {authError && <Alert variant="danger" className="text-center">{authError}</Alert>}
+          <Formik
+            initialValues={{ username: '', password: '' }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <FormikForm as={Form} className="login-form">
+                <Form.Group className="mb-3" controlId="username">
+                  <Form.Label>Имя пользователя</Form.Label>
+                  <Field
+                    as={Form.Control}
+                    type="text"
+                    name="username"
+                    placeholder="Введите имя пользователя"
+                    autoComplete="username"
+                  />
+                  <ErrorMessage name="username" component={Form.Text} className="text-danger" />
+                </Form.Group>
 
-              <div className="form-group">
-                <label htmlFor="password">Пароль</label>
-                <Field
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="Введите пароль"
-                  className="form-input"
-                />
-                <ErrorMessage name="password" component="div" className="error-message" />
-              </div>
+                <Form.Group className="mb-3" controlId="password">
+                  <Form.Label>Пароль</Form.Label>
+                  <Field
+                    as={Form.Control}
+                    type="password"
+                    name="password"
+                    placeholder="Введите пароль"
+                    autoComplete="current-password"
+                  />
+                  <ErrorMessage name="password" component={Form.Text} className="text-danger" />
+                </Form.Group>
 
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="submit-button"
-              >
-                {isSubmitting ? 'Вход...' : 'Войти'}
-              </button>
-            </Form>
-          )}
-        </Formik>
-      </div>
-    </div>
+                <div className="d-grid">
+                  <Button variant="primary" type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? <><Spinner animation="border" size="sm" /> Вход...</> : 'Войти'}
+                  </Button>
+                </div>
+              </FormikForm>
+            )}
+          </Formik>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
