@@ -447,6 +447,41 @@ body {
   cursor: not-allowed;
 }
 
+/* WebSocket статус */
+.socket-status {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.socket-status.online {
+  background: #28a745;
+  color: white;
+}
+
+.socket-status.offline {
+  background: #ffc107;
+  color: #212529;
+}
+
+/* Оптимистичные сообщения */
+.message-optimistic {
+  opacity: 0.7;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 0.9; }
+  100% { opacity: 0.7; }
+}
+
 /* Загрузка и ошибки */
 .loading-container {
   display: flex;

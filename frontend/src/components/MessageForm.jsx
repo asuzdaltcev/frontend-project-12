@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { addMessage } from '../slices/messagesSlice';
+import { addMessage, addMessageOptimistic } from '../slices/messagesSlice';
 import { Form, Button, InputGroup, Spinner } from 'react-bootstrap';
 
 const MessageForm = ({ channelId }) => {
@@ -22,11 +22,31 @@ const MessageForm = ({ channelId }) => {
       return;
     }
 
+    const username = localStorage.getItem('username');
+    
+    // Создаем временное сообщение для оптимистичного обновления
+    const tempMessage = {
+      id: `temp-${Date.now()}`,
+      body: values.body,
+      channelId,
+      username,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true
+    };
+
     try {
-      await dispatch(addMessage({ body: values.body, channelId })).unwrap();
+      // Оптимистично добавляем сообщение в UI
+      dispatch(addMessageOptimistic(tempMessage));
+      
+      // Сбрасываем форму сразу для лучшего UX
       resetForm();
+      
+      // Отправляем сообщение через WebSocket/HTTP
+      await dispatch(addMessage({ body: values.body, channelId })).unwrap();
+      
     } catch (error) {
-      // Можно добавить Alert
+      // В случае ошибки можно показать уведомление
+      console.error('Ошибка отправки сообщения:', error);
     } finally {
       setSubmitting(false);
     }

@@ -5,12 +5,16 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import PrivateRoute from './components/PrivateRoute';
+import WebSocketManager from './components/WebSocketManager';
+import ConnectionStatus from './components/ConnectionStatus';
 import './App.css';
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <WebSocketManager />
+        <ConnectionStatus />
         <Navigation />
         <main className="main-content">
           <Routes>

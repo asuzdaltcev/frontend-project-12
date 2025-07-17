@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import socketService from '../services/socketService';
 
 // Асинхронное действие для получения каналов
 export const fetchChannels = createAsyncThunk(
@@ -86,6 +87,7 @@ const channelsSlice = createSlice({
     currentChannelId: null,
     loading: false,
     error: null,
+    socketConnected: false,
   },
   reducers: {
     setCurrentChannel: (state, action) => {
@@ -106,6 +108,20 @@ const channelsSlice = createSlice({
       if (channel) {
         channel.name = name;
       }
+    },
+    // Обновление каналов через WebSocket
+    updateChannelsFromSocket: (state, action) => {
+      const updatedChannels = action.payload;
+      state.channels = updatedChannels;
+      
+      // Если текущий канал был удален, переключаемся на первый доступный
+      if (!state.channels.find(ch => ch.id === state.currentChannelId)) {
+        state.currentChannelId = state.channels[0]?.id || null;
+      }
+    },
+    // Обновляем статус WebSocket соединения
+    setSocketStatus: (state, action) => {
+      state.socketConnected = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -152,7 +168,9 @@ export const {
   setCurrentChannel, 
   addChannelOptimistic, 
   removeChannelOptimistic, 
-  renameChannelOptimistic 
+  renameChannelOptimistic,
+  updateChannelsFromSocket,
+  setSocketStatus
 } = channelsSlice.actions;
 
 export default channelsSlice.reducer; 

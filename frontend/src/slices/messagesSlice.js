@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import socketService from '../services/socketService';
 
 // Асинхронное действие для получения сообщений
 export const fetchMessages = createAsyncThunk(
@@ -19,24 +20,45 @@ export const fetchMessages = createAsyncThunk(
   }
 );
 
-// Асинхронное действие для добавления сообщения
+// Асинхронное действие для добавления сообщения через WebSocket
 export const addMessage = createAsyncThunk(
   'messages/addMessage',
   async ({ body, channelId }, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem('token');
       const username = localStorage.getItem('username');
-      const response = await axios.post('/api/v1/messages', 
-        { body, channelId, username },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
+      
+      // Сначала подключаемся к WebSocket если не подключены
+      if (!socketService.getConnectionStatus()) {
+        socketService.connect(token);
+      }
+
+      // Отправляем сообщение через WebSocket
+      const message = {
+        body,
+        channelId,
+        username
+      };
+
+      const response = await socketService.sendMessage(message);
+      return response;
     } catch (error) {
-      return rejectWithValue(error.response?.data || 'Ошибка отправки сообщения');
+      // Если WebSocket не работает, используем HTTP
+      try {
+        const token = localStorage.getItem('token');
+        const username = localStorage.getItem('username');
+        const response = await axios.post('/api/v1/messages', 
+          { body, channelId, username },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (httpError) {
+        return rejectWithValue(httpError.response?.data || 'Ошибка отправки сообщения');
+      }
     }
   }
 );
@@ -86,6 +108,7 @@ const messagesSlice = createSlice({
     messages: [],
     loading: false,
     error: null,
+    socketConnected: false,
   },
   reducers: {
     addMessageOptimistic: (state, action) => {
@@ -100,6 +123,19 @@ const messagesSlice = createSlice({
       if (message) {
         message.body = body;
       }
+    },
+    // Добавляем сообщение через WebSocket
+    addMessageFromSocket: (state, action) => {
+      const newMessage = action.payload;
+      // Проверяем, нет ли уже такого сообщения
+      const exists = state.messages.find(msg => msg.id === newMessage.id);
+      if (!exists) {
+        state.messages.push(newMessage);
+      }
+    },
+    // Обновляем статус WebSocket соединения
+    setSocketStatus: (state, action) => {
+      state.socketConnected = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -119,7 +155,8 @@ const messagesSlice = createSlice({
       })
       // addMessage
       .addCase(addMessage.fulfilled, (state, action) => {
-        state.messages.push(action.payload);
+        // Сообщение уже добавлено через WebSocket или оптимистично
+        // Здесь можно обновить ID если нужно
       })
       // editMessage
       .addCase(editMessage.fulfilled, (state, action) => {
@@ -139,7 +176,9 @@ const messagesSlice = createSlice({
 export const { 
   addMessageOptimistic, 
   removeMessageOptimistic, 
-  editMessageOptimistic 
+  editMessageOptimistic,
+  addMessageFromSocket,
+  setSocketStatus
 } = messagesSlice.actions;
 
 export default messagesSlice.reducer; 
