@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Row, Col, Card } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCurrentChannel } from '../slices/channelsSlice';
 import ChannelList from './ChannelList';
@@ -19,8 +19,8 @@ const ChatInterface = ({ channels, messages }) => {
   };
 
   return (
-    <Container fluid className="chat-interface">
-      <Row>
+    <div className="chat-interface w-100 h-100">
+      <Row className="h-100">
         <Col md={3} className="chat-sidebar p-0">
           <Card className="h-100 rounded-0 border-end">
             <Card.Header className="sidebar-header bg-white">
@@ -47,7 +47,7 @@ const ChatInterface = ({ channels, messages }) => {
           </Card>
         </Col>
       </Row>
-    </Container>
+    </div>
   );
 };
 

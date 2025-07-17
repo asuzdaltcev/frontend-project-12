@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav } from 'react-bootstrap';
 
 const Navigation = () => {
   const location = useLocation();
 
   return (
-    <Navbar bg="light" expand="md" className="mb-4 shadow-sm">
-      <Container>
+    <Navbar bg="light" expand="md" className="mb-4 shadow-sm w-100">
+      <div className="w-100 justify-content-between align-items-center px-3">
         <Navbar.Brand as={Link} to="/">
           💬 Chat App
         </Navbar.Brand>
@@ -22,7 +22,7 @@ const Navigation = () => {
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
-      </Container>
+      </div>
     </Navbar>
   );
 };
