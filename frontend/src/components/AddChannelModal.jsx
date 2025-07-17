@@ -10,9 +10,21 @@ const validationSchema = Yup.object().shape({
     .min(3, 'Минимум 3 символа')
     .max(20, 'Максимум 20 символов')
     .required('Обязательное поле')
+    .trim()
     .test('unique', 'Канал с таким именем уже существует', function(value) {
+      if (!value || !value.trim()) return true;
       const channels = this.options.context?.channels || [];
-      return !channels.some(channel => channel.name === value);
+      const normalizedValue = value.trim().toLowerCase();
+      const isDuplicate = channels.some(channel => 
+        channel.name.trim().toLowerCase() === normalizedValue
+      );
+      console.log('Валидация уникальности:', {
+        value,
+        normalizedValue,
+        channels: channels.map(c => ({ id: c.id, name: c.name, normalized: c.name.trim().toLowerCase() })),
+        isDuplicate
+      });
+      return !isDuplicate;
     }),
 });
 
@@ -21,13 +33,32 @@ const AddChannelModal = ({ show, onHide }) => {
   const channels = useSelector(state => state.channels.channels);
   const loading = useSelector(state => state.channels.loading);
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+  const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
-      await dispatch(addChannel(values.name)).unwrap();
+      const normalizedName = values.name.trim();
+      
+      // Дополнительная проверка на клиенте перед отправкой
+      const normalizedValue = normalizedName.toLowerCase();
+      const isDuplicate = channels.some(channel => 
+        channel.name.trim().toLowerCase() === normalizedValue
+      );
+      
+      if (isDuplicate) {
+        setFieldError('name', 'Канал с таким именем уже существует');
+        return;
+      }
+      
+      await dispatch(addChannel(normalizedName)).unwrap();
       resetForm();
       onHide();
     } catch (error) {
       console.error('Ошибка при добавлении канала:', error);
+      // Обработка ошибки дублирования имени с сервера
+      if (error?.message?.includes('уже существует') || error?.message?.includes('already exists')) {
+        setFieldError('name', 'Канал с таким именем уже существует');
+      } else {
+        setFieldError('name', error?.message || 'Ошибка при добавлении канала');
+      }
     } finally {
       setSubmitting(false);
     }
@@ -43,6 +74,8 @@ const AddChannelModal = ({ show, onHide }) => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
         context={{ channels }}
+        validateOnChange={true}
+        validateOnBlur={true}
       >
         {({
           values,
