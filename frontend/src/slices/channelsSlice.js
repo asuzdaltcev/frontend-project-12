@@ -145,6 +145,8 @@ const channelsSlice = createSlice({
       // addChannel
       .addCase(addChannel.fulfilled, (state, action) => {
         state.channels.push(action.payload);
+        // Автоматически переключаемся на новый канал
+        state.currentChannelId = action.payload.id;
       })
       // removeChannel
       .addCase(removeChannel.fulfilled, (state, action) => {

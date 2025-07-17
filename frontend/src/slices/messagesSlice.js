@@ -137,6 +137,11 @@ const messagesSlice = createSlice({
     setSocketStatus: (state, action) => {
       state.socketConnected = action.payload;
     },
+    // Удаляем все сообщения канала
+    removeChannelMessages: (state, action) => {
+      const channelId = action.payload;
+      state.messages = state.messages.filter(message => message.channelId !== channelId);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -178,7 +183,8 @@ export const {
   removeMessageOptimistic, 
   editMessageOptimistic,
   addMessageFromSocket,
-  setSocketStatus
+  setSocketStatus,
+  removeChannelMessages
 } = messagesSlice.actions;
 
 export default messagesSlice.reducer; 
