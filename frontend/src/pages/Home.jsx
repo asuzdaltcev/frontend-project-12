@@ -1,26 +1,41 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchChannels } from '../slices/channelsSlice';
+import { fetchMessages } from '../slices/messagesSlice';
+import ChatInterface from '../components/ChatInterface';
 
 const Home = () => {
-  return (
-    <div className="home-page">
-      <div className="container">
-        <h1>Добро пожаловать в чат!</h1>
-        <p>Для участия в чате необходимо авторизоваться.</p>
-        <div className="features">
-          <div className="feature">
-            <h3>💬 Общение</h3>
-            <p>Общайтесь в реальном времени с другими пользователями</p>
-          </div>
-          <div className="feature">
-            <h3>📝 Сообщения</h3>
-            <p>Отправляйте и получайте сообщения в различных каналах</p>
-          </div>
-          <div className="feature">
-            <h3>🔐 Безопасность</h3>
-            <p>Ваши данные защищены современными методами шифрования</p>
-          </div>
-        </div>
+  const dispatch = useDispatch();
+  const { channels, loading: channelsLoading, error: channelsError } = useSelector(state => state.channels);
+  const { messages, loading: messagesLoading, error: messagesError } = useSelector(state => state.messages);
+
+  useEffect(() => {
+    // Загружаем данные при монтировании компонента
+    dispatch(fetchChannels());
+    dispatch(fetchMessages());
+  }, [dispatch]);
+
+  if (channelsLoading || messagesLoading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">Загрузка чата...</div>
       </div>
+    );
+  }
+
+  if (channelsError || messagesError) {
+    return (
+      <div className="error-container">
+        <h2>Ошибка загрузки данных</h2>
+        <p>{channelsError || messagesError}</p>
+        <button onClick={() => window.location.reload()}>Обновить страницу</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="chat-page">
+      <ChatInterface channels={channels} messages={messages} />
     </div>
   );
 };
