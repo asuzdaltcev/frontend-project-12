@@ -5,35 +5,43 @@ import * as Yup from 'yup';
 import axios from 'axios';
 import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
 
-const Login = () => {
+const Signup = () => {
   const [authError, setAuthError] = useState(null);
   const navigate = useNavigate();
 
-  // Схема валидации для формы
+  // Схема валидации для формы регистрации
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, 'Имя пользователя должно содержать минимум 3 символа')
       .max(20, 'Имя пользователя не должно превышать 20 символов')
       .required('Имя пользователя обязательно'),
     password: Yup.string()
-      .min(1, 'Пароль обязателен')
+      .min(6, 'Пароль должен содержать минимум 6 символов')
       .required('Пароль обязателен'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
+      .required('Подтверждение пароля обязательно'),
   });
 
   // Обработчик отправки формы
   const handleSubmit = async (values, { setSubmitting }) => {
     setAuthError(null);
     try {
-      const response = await axios.post('/api/v1/login', values);
+      const response = await axios.post('/api/v1/signup', {
+        username: values.username,
+        password: values.password,
+      });
       const { token, username } = response.data;
       localStorage.setItem('token', token);
       localStorage.setItem('username', username);
       navigate('/');
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        setAuthError('Неверное имя пользователя или пароль');
+      if (error.response && error.response.status === 409) {
+        setAuthError('Пользователь с таким именем уже существует');
+      } else if (error.response && error.response.status === 400) {
+        setAuthError('Ошибка валидации данных. Проверьте введенные данные.');
       } else {
-        setAuthError('Ошибка авторизации. Попробуйте позже.');
+        setAuthError('Ошибка регистрации. Попробуйте позже.');
       }
     } finally {
       setSubmitting(false);
@@ -41,19 +49,19 @@ const Login = () => {
   };
 
   return (
-    <Container className="login-page d-flex align-items-center justify-content-center" style={{ minHeight: '70vh' }}>
+    <Container className="signup-page d-flex align-items-center justify-content-center" style={{ minHeight: '70vh' }}>
       <Row className="w-100 justify-content-center">
-        <Col xs={12} md={6} lg={4} className="login-container p-4 bg-white rounded shadow">
-          <h1 className="text-center mb-3">Вход в чат</h1>
-          <p className="text-center text-muted mb-4">Введите свои данные для авторизации</p>
+        <Col xs={12} md={6} lg={4} className="signup-container p-4 bg-white rounded shadow">
+          <h1 className="text-center mb-3">Регистрация</h1>
+          <p className="text-center text-muted mb-4">Создайте новый аккаунт для входа в чат</p>
           {authError && <Alert variant="danger" className="text-center">{authError}</Alert>}
           <Formik
-            initialValues={{ username: '', password: '' }}
+            initialValues={{ username: '', password: '', confirmPassword: '' }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
-              <FormikForm as={Form} className="login-form">
+              <FormikForm as={Form} className="signup-form">
                 <Form.Group className="mb-3" controlId="username">
                   <Form.Label>Имя пользователя</Form.Label>
                   <Field
@@ -73,20 +81,32 @@ const Login = () => {
                     type="password"
                     name="password"
                     placeholder="Введите пароль"
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                   />
                   <ErrorMessage name="password" component={Form.Text} className="text-danger" />
                 </Form.Group>
 
+                <Form.Group className="mb-3" controlId="confirmPassword">
+                  <Form.Label>Подтверждение пароля</Form.Label>
+                  <Field
+                    as={Form.Control}
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Подтвердите пароль"
+                    autoComplete="new-password"
+                  />
+                  <ErrorMessage name="confirmPassword" component={Form.Text} className="text-danger" />
+                </Form.Group>
+
                 <div className="d-grid">
                   <Button variant="primary" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? <><Spinner animation="border" size="sm" /> Вход...</> : 'Войти'}
+                    {isSubmitting ? <><Spinner animation="border" size="sm" /> Регистрация...</> : 'Зарегистрироваться'}
                   </Button>
                 </div>
                 <div className="text-center mt-3">
                   <p className="mb-0">
-                    Нет аккаунта?{' '}
-                    <a href="/signup" className="text-decoration-none">Зарегистрироваться</a>
+                    Уже есть аккаунт?{' '}
+                    <a href="/login" className="text-decoration-none">Войти</a>
                   </p>
                 </div>
               </FormikForm>
@@ -98,4 +118,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Signup; 
