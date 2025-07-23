@@ -1,23 +1,19 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
+import { useDispatch } from 'react-redux';
 import { removeChannel } from '../slices/channelsSlice';
-import { removeChannelMessages } from '../slices/messagesSlice';
+import { useTranslation } from 'react-i18next';
 
 const RemoveChannelModal = ({ show, onHide, channel }) => {
   const dispatch = useDispatch();
-  const loading = useSelector(state => state.channels.loading);
   const { t } = useTranslation();
 
   const handleRemove = async () => {
     try {
       await dispatch(removeChannel(channel.id)).unwrap();
-      // Удаляем сообщения канала
-      dispatch(removeChannelMessages(channel.id));
       onHide();
     } catch (error) {
-      console.error('Ошибка при удалении канала:', error);
+      console.error('Ошибка удаления канала:', error);
     }
   };
 
@@ -37,15 +33,11 @@ const RemoveChannelModal = ({ show, onHide, channel }) => {
         </p>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide} disabled={loading}>
+        <Button variant="secondary" onClick={onHide}>
           {t('common.cancel')}
         </Button>
-        <Button 
-          variant="danger" 
-          onClick={handleRemove}
-          disabled={loading}
-        >
-          {loading ? t('common.loading') : t('channels.remove')}
+        <Button variant="danger" onClick={handleRemove}>
+          {t('common.delete')}
         </Button>
       </Modal.Footer>
     </Modal>

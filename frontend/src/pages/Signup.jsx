@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
+import { useNavigate, Link } from 'react-router-dom';
+import { Form, Button, Alert, Card, Container } from 'react-bootstrap';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
-import { Container, Row, Col, Form, Button, Alert, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 
 const Signup = () => {
-  const [authError, setAuthError] = useState(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Схема валидации для формы регистрации
+  // Схема валидации с использованием переводов
   const validationSchema = Yup.object({
     username: Yup.string()
       .min(3, t('signup.validation.username.min'))
@@ -25,97 +25,135 @@ const Signup = () => {
       .required(t('signup.validation.confirmPassword.required')),
   });
 
-  // Обработчик отправки формы
   const handleSubmit = async (values, { setSubmitting }) => {
-    setAuthError(null);
+    setIsSubmitting(true);
+    setError('');
+
     try {
-      const response = await axios.post('/api/v1/signup', {
-        username: values.username,
-        password: values.password,
+      const response = await fetch('/api/v1/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: values.username,
+          password: values.password,
+        }),
       });
-      const { token, username } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', username);
-      navigate('/');
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        setAuthError(t('signup.error.userExists'));
-      } else if (error.response && error.response.status === 400) {
-        setAuthError(t('signup.error.validation'));
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', values.username);
+        navigate('/');
       } else {
-        setAuthError(t('signup.error.general'));
+        const errorData = await response.json();
+        if (response.status === 409) {
+          setError(t('signup.error.userExists'));
+        } else if (response.status === 400) {
+          setError(t('signup.error.validation'));
+        } else {
+          setError(t('signup.error.general'));
+        }
       }
+    } catch (err) {
+      setError(t('signup.error.general'));
     } finally {
+      setIsSubmitting(false);
       setSubmitting(false);
     }
   };
 
   return (
-    <Container className="signup-page d-flex align-items-center justify-content-center" style={{ minHeight: '70vh' }}>
-      <Row className="w-100 justify-content-center">
-        <Col xs={12} md={6} lg={4} className="signup-container p-4 bg-white rounded shadow">
-          <h1 className="text-center mb-3">{t('signup.title')}</h1>
-          <p className="text-center text-muted mb-4">{t('signup.subtitle')}</p>
-          {authError && <Alert variant="danger" className="text-center">{authError}</Alert>}
+    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
+      <Card style={{ width: '400px' }}>
+        <Card.Body className="p-4">
+          <Card.Title className="text-center mb-4">
+            {t('signup.title')}
+          </Card.Title>
+          <Card.Subtitle className="text-center text-muted mb-4">
+            {t('signup.subtitle')}
+          </Card.Subtitle>
+
+          {error && (
+            <Alert variant="danger" className="mb-3">
+              {error}
+            </Alert>
+          )}
+
           <Formik
             initialValues={{ username: '', password: '', confirmPassword: '' }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ isSubmitting }) => (
-              <FormikForm as={Form} className="signup-form">
-                <Form.Group className="mb-3" controlId="username">
+            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-3">
                   <Form.Label>{t('signup.username')}</Form.Label>
-                  <Field
-                    as={Form.Control}
+                  <Form.Control
                     type="text"
                     name="username"
                     placeholder={t('signup.usernamePlaceholder')}
-                    autoComplete="username"
+                    value={values.username}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.username && errors.username}
                   />
-                  <ErrorMessage name="username" component={Form.Text} className="text-danger" />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.username}
+                  </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="password">
+                <Form.Group className="mb-3">
                   <Form.Label>{t('signup.password')}</Form.Label>
-                  <Field
-                    as={Form.Control}
+                  <Form.Control
                     type="password"
                     name="password"
                     placeholder={t('signup.passwordPlaceholder')}
-                    autoComplete="new-password"
+                    value={values.password}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.password && errors.password}
                   />
-                  <ErrorMessage name="password" component={Form.Text} className="text-danger" />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.password}
+                  </Form.Control.Feedback>
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="confirmPassword">
+                <Form.Group className="mb-4">
                   <Form.Label>{t('signup.confirmPassword')}</Form.Label>
-                  <Field
-                    as={Form.Control}
+                  <Form.Control
                     type="password"
                     name="confirmPassword"
                     placeholder={t('signup.confirmPasswordPlaceholder')}
-                    autoComplete="new-password"
+                    value={values.confirmPassword}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isInvalid={touched.confirmPassword && errors.confirmPassword}
                   />
-                  <ErrorMessage name="confirmPassword" component={Form.Text} className="text-danger" />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.confirmPassword}
+                  </Form.Control.Feedback>
                 </Form.Group>
 
-                <div className="d-grid">
-                  <Button variant="primary" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? <><Spinner animation="border" size="sm" /> {t('signup.submitting')}</> : t('signup.submit')}
-                  </Button>
-                </div>
-                <div className="text-center mt-3">
-                  <p className="mb-0">
-                    {t('signup.hasAccount')}{' '}
-                    <a href="/login" className="text-decoration-none">{t('signup.loginLink')}</a>
-                  </p>
-                </div>
-              </FormikForm>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-100 mb-3"
+                  disabled={isSubmitting || isSubmitting}
+                >
+                  {isSubmitting || isSubmitting ? t('signup.submitting') : t('signup.submit')}
+                </Button>
+              </Form>
             )}
           </Formik>
-        </Col>
-      </Row>
+
+          <div className="text-center">
+            <span className="text-muted">{t('signup.hasAccount')} </span>
+            <Link to="/login">{t('signup.loginLink')}</Link>
+          </div>
+        </Card.Body>
+      </Card>
     </Container>
   );
 };

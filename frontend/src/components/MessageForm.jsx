@@ -1,22 +1,22 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
 import { addMessage, addMessageOptimistic } from '../slices/messagesSlice';
 import { Form, Button, InputGroup, Spinner } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const MessageForm = ({ channelId }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const validationSchema = Yup.object({
+  const validationSchema = useMemo(() => Yup.object({
     body: Yup.string()
       .trim()
-      .min(1, t('messages.error.send'))
-      .max(1000, t('messages.error.send'))
-      .required(t('messages.error.send')),
-  });
+      .min(1, t('messages.validation.empty'))
+      .max(1000, t('messages.validation.tooLong'))
+      .required(t('messages.validation.required')),
+  }), [t]);
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     if (!channelId) {
@@ -57,7 +57,7 @@ const MessageForm = ({ channelId }) => {
   if (!channelId) {
     return (
       <div className="message-form disabled text-center text-muted py-3">
-        <p>{t('chat.noMessages')}</p>
+        <p>{t('messages.selectChannel')}</p>
       </div>
     );
   }

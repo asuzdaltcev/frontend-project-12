@@ -1,20 +1,22 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { ListGroup, Card, Badge } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const MessageList = ({ messages }) => {
   const socketConnected = useSelector(state => state.messages.socketConnected);
+  const { t } = useTranslation();
 
   if (messages.length === 0) {
     return (
       <div className="message-list empty text-center text-muted py-4">
-        <p>Нет сообщений в этом канале. Начните общение!</p>
+        <p>{t('messages.noMessages')}</p>
         <div className="mt-2">
           <Badge bg={socketConnected ? 'success' : 'warning'} className="me-2">
-            {socketConnected ? '🟢 Онлайн' : '🟡 Офлайн'}
+            {socketConnected ? t('connection.online') : t('connection.offline')}
           </Badge>
           <small className="text-muted">
-            {socketConnected ? 'Сообщения обновляются в реальном времени' : 'Сообщения обновляются при перезагрузке'}
+            {socketConnected ? t('messages.realTime') : t('messages.reloadRequired')}
           </small>
         </div>
       </div>
@@ -24,9 +26,9 @@ const MessageList = ({ messages }) => {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-        <small className="text-muted">Сообщения</small>
+        <small className="text-muted">{t('messages.title')}</small>
         <Badge bg={socketConnected ? 'success' : 'warning'} className="fs-6">
-          {socketConnected ? '🟢 Онлайн' : '🟡 Офлайн'}
+          {socketConnected ? t('connection.online') : t('connection.offline')}
         </Badge>
       </div>
       <ListGroup className="message-list">
@@ -38,7 +40,7 @@ const MessageList = ({ messages }) => {
                   <span className="fw-bold text-primary">
                     {message.username}
                     {message.isOptimistic && (
-                      <Badge bg="secondary" className="ms-2 fs-6">Отправка...</Badge>
+                      <Badge bg="secondary" className="ms-2 fs-6">{t('messages.sending')}</Badge>
                     )}
                   </span>
                   <span className="text-muted" style={{ fontSize: '0.85em' }}>

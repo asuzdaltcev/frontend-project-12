@@ -8,29 +8,32 @@ import NotFound from './pages/NotFound';
 import PrivateRoute from './components/PrivateRoute';
 import WebSocketManager from './components/WebSocketManager';
 import ConnectionStatus from './components/ConnectionStatus';
+import I18nProvider from './components/I18nProvider';
 import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <WebSocketManager />
-        <ConnectionStatus />
-        <Navigation />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={
-              <PrivateRoute>
-                <Home />
-              </PrivateRoute>
-            } />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <I18nProvider>
+      <Router>
+        <div className="App">
+          <Navigation />
+          <WebSocketManager />
+          <ConnectionStatus />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              } />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </main>
+        </div>
+      </Router>
+    </I18nProvider>
   );
 }
 
