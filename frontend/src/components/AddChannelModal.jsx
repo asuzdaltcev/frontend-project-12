@@ -3,35 +3,37 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { addChannel } from '../slices/channelsSlice';
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, 'Минимум 3 символа')
-    .max(20, 'Максимум 20 символов')
-    .required('Обязательное поле')
-    .trim()
-    .test('unique', 'Канал с таким именем уже существует', function(value) {
-      if (!value || !value.trim()) return true;
-      const channels = this.options.context?.channels || [];
-      const normalizedValue = value.trim().toLowerCase();
-      const isDuplicate = channels.some(channel => 
-        channel.name.trim().toLowerCase() === normalizedValue
-      );
-      console.log('Валидация уникальности:', {
-        value,
-        normalizedValue,
-        channels: channels.map(c => ({ id: c.id, name: c.name, normalized: c.name.trim().toLowerCase() })),
-        isDuplicate
-      });
-      return !isDuplicate;
-    }),
-});
 
 const AddChannelModal = ({ show, onHide }) => {
   const dispatch = useDispatch();
   const channels = useSelector(state => state.channels.channels);
   const loading = useSelector(state => state.channels.loading);
+  const { t } = useTranslation();
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(3, t('channels.error.nameLength'))
+      .max(20, t('channels.error.nameLength'))
+      .required(t('channels.error.nameRequired'))
+      .trim()
+      .test('unique', t('channels.error.nameUnique'), function(value) {
+        if (!value || !value.trim()) return true;
+        const channels = this.options.context?.channels || [];
+        const normalizedValue = value.trim().toLowerCase();
+        const isDuplicate = channels.some(channel => 
+          channel.name.trim().toLowerCase() === normalizedValue
+        );
+        console.log('Валидация уникальности:', {
+          value,
+          normalizedValue,
+          channels: channels.map(c => ({ id: c.id, name: c.name, normalized: c.name.trim().toLowerCase() })),
+          isDuplicate
+        });
+        return !isDuplicate;
+      }),
+  });
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
@@ -44,7 +46,7 @@ const AddChannelModal = ({ show, onHide }) => {
       );
       
       if (isDuplicate) {
-        setFieldError('name', 'Канал с таким именем уже существует');
+        setFieldError('name', t('channels.error.nameUnique'));
         return;
       }
       
@@ -55,9 +57,9 @@ const AddChannelModal = ({ show, onHide }) => {
       console.error('Ошибка при добавлении канала:', error);
       // Обработка ошибки дублирования имени с сервера
       if (error?.message?.includes('уже существует') || error?.message?.includes('already exists')) {
-        setFieldError('name', 'Канал с таким именем уже существует');
+        setFieldError('name', t('channels.error.nameUnique'));
       } else {
-        setFieldError('name', error?.message || 'Ошибка при добавлении канала');
+        setFieldError('name', error?.message || t('channels.error.add'));
       }
     } finally {
       setSubmitting(false);
@@ -67,7 +69,7 @@ const AddChannelModal = ({ show, onHide }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Добавить канал</Modal.Title>
+        <Modal.Title>{t('channels.add')}</Modal.Title>
       </Modal.Header>
       <Formik
         initialValues={{ name: '' }}
@@ -89,7 +91,7 @@ const AddChannelModal = ({ show, onHide }) => {
           <Form onSubmit={handleSubmit}>
             <Modal.Body>
               <Form.Group>
-                <Form.Label htmlFor="name">Имя канала</Form.Label>
+                <Form.Label htmlFor="name">{t('channels.name')}</Form.Label>
                 <Form.Control
                   type="text"
                   id="name"
@@ -98,7 +100,7 @@ const AddChannelModal = ({ show, onHide }) => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   isInvalid={touched.name && errors.name}
-                  placeholder="Введите имя канала"
+                  placeholder={t('channels.namePlaceholder')}
                   autoFocus
                 />
                 <Form.Control.Feedback type="invalid">
@@ -108,14 +110,14 @@ const AddChannelModal = ({ show, onHide }) => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={onHide} disabled={isSubmitting}>
-                Отмена
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="primary" 
                 type="submit" 
                 disabled={isSubmitting || loading}
               >
-                {isSubmitting ? 'Добавление...' : 'Добавить'}
+                {isSubmitting ? t('common.loading') : t('channels.add')}
               </Button>
             </Modal.Footer>
           </Form>

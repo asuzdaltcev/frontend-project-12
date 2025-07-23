@@ -2,18 +2,20 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useTranslation } from 'react-i18next';
 import { addMessage, addMessageOptimistic } from '../slices/messagesSlice';
 import { Form, Button, InputGroup, Spinner } from 'react-bootstrap';
 
 const MessageForm = ({ channelId }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const validationSchema = Yup.object({
     body: Yup.string()
       .trim()
-      .min(1, 'Сообщение не может быть пустым')
-      .max(1000, 'Сообщение слишком длинное')
-      .required('Введите сообщение'),
+      .min(1, t('messages.error.send'))
+      .max(1000, t('messages.error.send'))
+      .required(t('messages.error.send')),
   });
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -55,7 +57,7 @@ const MessageForm = ({ channelId }) => {
   if (!channelId) {
     return (
       <div className="message-form disabled text-center text-muted py-3">
-        <p>Выберите канал для отправки сообщения</p>
+        <p>{t('chat.noMessages')}</p>
       </div>
     );
   }
@@ -73,7 +75,7 @@ const MessageForm = ({ channelId }) => {
               <Field
                 as={Form.Control}
                 name="body"
-                placeholder="Введите сообщение..."
+                placeholder={t('messages.placeholder')}
                 className="message-input"
                 rows="2"
                 disabled={isSubmitting}
@@ -84,7 +86,7 @@ const MessageForm = ({ channelId }) => {
                 disabled={isSubmitting}
                 className="send-button"
               >
-                {isSubmitting ? <Spinner animation="border" size="sm" /> : 'Отправить'}
+                {isSubmitting ? <Spinner animation="border" size="sm" /> : t('messages.send')}
               </Button>
             </InputGroup>
             <ErrorMessage name="body" component={Form.Text} className="text-danger" />

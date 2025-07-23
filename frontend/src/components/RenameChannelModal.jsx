@@ -3,15 +3,16 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { renameChannel } from '../slices/channelsSlice';
 
-const validationSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, 'Минимум 3 символа')
-    .max(20, 'Максимум 20 символов')
-    .required('Обязательное поле')
-    .trim()
-    .test('unique', 'Канал с таким именем уже существует', function(value) {
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .min(3, t('channels.error.nameLength'))
+      .max(20, t('channels.error.nameLength'))
+      .required(t('channels.error.nameRequired'))
+      .trim()
+      .test('unique', t('channels.error.nameUnique'), function(value) {
       if (!value || !value.trim()) return true;
       const channels = this.options.context?.channels || [];
       const currentChannelId = this.options.context?.currentChannelId;
@@ -29,6 +30,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
   const channels = useSelector(state => state.channels.channels);
   const currentChannelId = useSelector(state => state.channels.currentChannelId);
   const loading = useSelector(state => state.channels.loading);
+  const { t } = useTranslation();
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
@@ -41,7 +43,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       );
       
       if (isDuplicate) {
-        setFieldError('name', 'Канал с таким именем уже существует');
+        setFieldError('name', t('channels.error.nameUnique'));
         return;
       }
       
@@ -52,9 +54,9 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       console.error('Ошибка при переименовании канала:', error);
       // Обработка ошибки дублирования имени с сервера
       if (error?.message?.includes('уже существует') || error?.message?.includes('already exists')) {
-        setFieldError('name', 'Канал с таким именем уже существует');
+        setFieldError('name', t('channels.error.nameUnique'));
       } else {
-        setFieldError('name', error?.message || 'Ошибка при переименовании канала');
+        setFieldError('name', error?.message || t('channels.error.rename'));
       }
     } finally {
       setSubmitting(false);
@@ -66,7 +68,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Переименовать канал</Modal.Title>
+        <Modal.Title>{t('channels.rename')}</Modal.Title>
       </Modal.Header>
       <Formik
         initialValues={{ name: channel.name }}
@@ -89,7 +91,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
           <Form onSubmit={handleSubmit}>
             <Modal.Body>
               <Form.Group>
-                <Form.Label htmlFor="name">Имя канала</Form.Label>
+                <Form.Label htmlFor="name">{t('channels.name')}</Form.Label>
                 <Form.Control
                   type="text"
                   id="name"
@@ -98,7 +100,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   isInvalid={touched.name && errors.name}
-                  placeholder="Введите новое имя канала"
+                  placeholder={t('channels.namePlaceholder')}
                   autoFocus
                 />
                 <Form.Control.Feedback type="invalid">
@@ -108,14 +110,14 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={onHide} disabled={isSubmitting}>
-                Отмена
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="primary" 
                 type="submit" 
                 disabled={isSubmitting || loading}
               >
-                {isSubmitting ? 'Переименование...' : 'Переименовать'}
+                {isSubmitting ? t('common.loading') : t('channels.rename')}
               </Button>
             </Modal.Footer>
           </Form>

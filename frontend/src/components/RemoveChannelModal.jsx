@@ -1,12 +1,14 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { removeChannel } from '../slices/channelsSlice';
 import { removeChannelMessages } from '../slices/messagesSlice';
 
 const RemoveChannelModal = ({ show, onHide, channel }) => {
   const dispatch = useDispatch();
   const loading = useSelector(state => state.channels.loading);
+  const { t } = useTranslation();
 
   const handleRemove = async () => {
     try {
@@ -24,27 +26,26 @@ const RemoveChannelModal = ({ show, onHide, channel }) => {
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Удалить канал</Modal.Title>
+        <Modal.Title>{t('channels.remove')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <p>
-          Удалить канал <strong>#{channel.name}</strong>?
+          {t('channels.confirmRemove', { name: channel.name })}
         </p>
         <p className="text-muted">
-          Удаление канала приведет к удалению всех сообщений в нем. 
-          Пользователи, находящиеся в этом канале, будут перемещены в канал General.
+          {t('channels.confirmRemoveText')}
         </p>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide} disabled={loading}>
-          Отмена
+          {t('common.cancel')}
         </Button>
         <Button 
           variant="danger" 
           onClick={handleRemove}
           disabled={loading}
         >
-          {loading ? 'Удаление...' : 'Удалить'}
+          {loading ? t('common.loading') : t('channels.remove')}
         </Button>
       </Modal.Footer>
     </Modal>

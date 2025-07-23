@@ -1,10 +1,12 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Navbar, Nav, Button } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const Navigation = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   // Проверяем, авторизован ли пользователь
   const isAuthenticated = !!localStorage.getItem('token');
@@ -20,7 +22,7 @@ const Navigation = () => {
     <Navbar bg="light" expand="md" className="mb-4 shadow-sm w-100">
       <div className="w-100 justify-content-between align-items-center px-3">
         <Navbar.Brand as={Link} to="/">
-          Hexlet Chat
+          {t('nav.brand')}
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar-nav" />
         <Navbar.Collapse id="main-navbar-nav">
@@ -28,19 +30,19 @@ const Navigation = () => {
             {isAuthenticated ? (
               <>
                 <Nav.Link as={Link} to="/" active={location.pathname === '/'}>
-                  Главная
+                  {t('nav.home')}
                 </Nav.Link>
                 <Button variant="outline-danger" onClick={handleLogout} className="ms-2">
-                  Выйти
+                  {t('nav.logout')}
                 </Button>
               </>
             ) : (
               <>
                 <Nav.Link as={Link} to="/login" active={location.pathname === '/login'}>
-                  Войти
+                  {t('nav.login')}
                 </Nav.Link>
                 <Nav.Link as={Link} to="/signup" active={location.pathname === '/signup'}>
-                  Регистрация
+                  {t('nav.signup')}
                 </Nav.Link>
               </>
             )}

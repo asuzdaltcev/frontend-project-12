@@ -1,9 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Badge } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 
 const ConnectionStatus = () => {
   const socketConnected = useSelector(state => state.messages.socketConnected);
+  const { t } = useTranslation();
 
   return (
     <Badge 
@@ -21,7 +23,7 @@ const ConnectionStatus = () => {
         transition: 'all 0.3s ease'
       }}
     >
-      {socketConnected ? '🟢 Онлайн' : '🟡 Офлайн'}
+      {socketConnected ? `🟢 ${t('connection.connected')}` : `🟡 ${t('connection.disconnected')}`}
     </Badge>
   );
 };
