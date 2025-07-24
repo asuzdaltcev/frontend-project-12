@@ -40,7 +40,7 @@ const RemoveChannelModal = ({ show, onHide, channel }) => {
         <Button variant="secondary" onClick={onHide}>
           {t('common.cancel')}
         </Button>
-        <Button variant="danger" onClick={handleRemove}>
+        <Button variant="danger" className="btn-danger" onClick={handleRemove}>
           {t('common.delete')}
         </Button>
       </Modal.Footer>

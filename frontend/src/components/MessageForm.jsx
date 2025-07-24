@@ -101,6 +101,7 @@ const MessageForm = ({ channelId }) => {
                 className="message-input"
                 rows="2"
                 disabled={isSubmitting}
+                aria-label="Новое сообщение"
               />
               <Button
                 variant="primary"

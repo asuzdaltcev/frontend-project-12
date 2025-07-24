@@ -18,7 +18,7 @@ const ChannelDropdown = ({ channel }) => {
           size="sm"
           className="channel-dropdown-toggle"
         >
-          <span className="visually-hidden">Управление каналом</span>
+          Управление каналом
         </Dropdown.Toggle>
 
         <Dropdown.Menu>
