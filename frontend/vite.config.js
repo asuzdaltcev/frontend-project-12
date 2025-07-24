@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   build: {
+    sourcemap: true, // Включаем source maps для Rollbar
     rollupOptions: {
       external: ['crypto'],
     },
