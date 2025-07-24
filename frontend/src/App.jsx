@@ -9,6 +9,7 @@ import PrivateRoute from './components/PrivateRoute';
 import WebSocketManager from './components/WebSocketManager';
 import ConnectionStatus from './components/ConnectionStatus';
 import I18nProvider from './components/I18nProvider';
+import NotificationManager from './components/NotificationManager';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
           <Navigation />
           <WebSocketManager />
           <ConnectionStatus />
+          <NotificationManager />
           <main className="main-content">
             <Routes>
               <Route path="/" element={

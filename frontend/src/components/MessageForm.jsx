@@ -5,10 +5,12 @@ import * as Yup from 'yup';
 import { addMessage, addMessageOptimistic } from '../slices/messagesSlice';
 import { Form, Button, InputGroup, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from './NotificationManager';
 
 const MessageForm = ({ channelId }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { showMessageSent, showError } = useNotifications();
 
   const validationSchema = useMemo(() => Yup.object({
     body: Yup.string()
@@ -46,9 +48,13 @@ const MessageForm = ({ channelId }) => {
       // Отправляем сообщение через WebSocket/HTTP
       await dispatch(addMessage({ body: values.body, channelId })).unwrap();
       
+      // Показываем уведомление об успешной отправке
+      showMessageSent();
+      
     } catch (error) {
-      // В случае ошибки можно показать уведомление
+      // В случае ошибки показываем уведомление
       console.error('Ошибка отправки сообщения:', error);
+      showError(t('messages.error.send'));
     } finally {
       setSubmitting(false);
     }

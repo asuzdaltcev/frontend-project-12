@@ -4,9 +4,13 @@ import { fetchChannels, setCurrentChannel } from '../slices/channelsSlice';
 import { fetchMessages } from '../slices/messagesSlice';
 import ChatInterface from '../components/ChatInterface';
 import { Container, Alert, Spinner } from 'react-bootstrap';
+import { useNotifications } from '../components/NotificationManager';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const { showNetworkError, showLoadingError } = useNotifications();
   const { channels, loading: channelsLoading, error: channelsError } = useSelector(state => state.channels);
   const { messages, loading: messagesLoading, error: messagesError } = useSelector(state => state.messages);
 
@@ -14,6 +18,27 @@ const Home = () => {
     dispatch(fetchChannels());
     dispatch(fetchMessages());
   }, [dispatch]);
+
+  // Обработка ошибок загрузки данных
+  useEffect(() => {
+    if (channelsError) {
+      if (channelsError === 'network_error') {
+        showNetworkError();
+      } else {
+        showLoadingError();
+      }
+    }
+  }, [channelsError, showNetworkError, showLoadingError]);
+
+  useEffect(() => {
+    if (messagesError) {
+      if (messagesError === 'network_error') {
+        showNetworkError();
+      } else {
+        showLoadingError();
+      }
+    }
+  }, [messagesError, showNetworkError, showLoadingError]);
 
   // Автоматически выбираем канал General при загрузке
   useEffect(() => {
@@ -34,7 +59,7 @@ const Home = () => {
     return (
       <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
         <Spinner animation="border" role="status" variant="primary">
-          <span className="visually-hidden">Загрузка чата...</span>
+          <span className="visually-hidden">{t('common.loading')}</span>
         </Spinner>
       </Container>
     );
@@ -44,9 +69,11 @@ const Home = () => {
     return (
       <Container className="py-5">
         <Alert variant="danger" className="text-center">
-          <h4>Ошибка загрузки данных</h4>
-          <div>{channelsError || messagesError}</div>
-          <button className="btn btn-danger mt-3" onClick={() => window.location.reload()}>Обновить страницу</button>
+          <h4>{t('common.error')}</h4>
+          <div>{t('notifications.error.loading')}</div>
+          <button className="btn btn-danger mt-3" onClick={() => window.location.reload()}>
+            {t('common.loading')}
+          </button>
         </Alert>
       </Container>
     );

@@ -108,7 +108,19 @@ const resources = {
       'connection.connecting': 'Подключение...',
       'connection.error': 'Ошибка соединения',
       'connection.online': '🟢 Онлайн',
-      'connection.offline': '🟡 Офлайн',
+      'connection.offline': '�� Офлайн',
+
+      // Уведомления
+      'notifications.error.network': 'Ошибка сети. Проверьте подключение к интернету.',
+      'notifications.error.loading': 'Ошибка загрузки данных. Попробуйте обновить страницу.',
+      'notifications.error.unknown': 'Произошла неизвестная ошибка.',
+      'notifications.success.channelCreated': 'Канал "{{name}}" успешно создан',
+      'notifications.success.channelRenamed': 'Канал "{{name}}" успешно переименован',
+      'notifications.success.channelRemoved': 'Канал "{{name}}" успешно удален',
+      'notifications.success.messageSent': 'Сообщение отправлено',
+      'notifications.info.connecting': 'Подключение к серверу...',
+      'notifications.info.connected': 'Подключение восстановлено',
+      'notifications.warning.disconnected': 'Соединение потеряно. Попытка переподключения...',
 
       // Общие
       'common.loading': 'Загрузка...',

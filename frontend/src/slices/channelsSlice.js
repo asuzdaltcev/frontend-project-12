@@ -15,6 +15,10 @@ export const fetchChannels = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
+      // Проверяем тип ошибки для более точного сообщения
+      if (error.code === 'NETWORK_ERROR' || !error.response) {
+        return rejectWithValue('network_error');
+      }
       return rejectWithValue(error.response?.data || 'Ошибка загрузки каналов');
     }
   }
@@ -36,6 +40,9 @@ export const addChannel = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
+      if (error.code === 'NETWORK_ERROR' || !error.response) {
+        return rejectWithValue('network_error');
+      }
       return rejectWithValue(error.response?.data || 'Ошибка добавления канала');
     }
   }
@@ -54,6 +61,9 @@ export const removeChannel = createAsyncThunk(
       });
       return channelId;
     } catch (error) {
+      if (error.code === 'NETWORK_ERROR' || !error.response) {
+        return rejectWithValue('network_error');
+      }
       return rejectWithValue(error.response?.data || 'Ошибка удаления канала');
     }
   }
@@ -75,6 +85,9 @@ export const renameChannel = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
+      if (error.code === 'NETWORK_ERROR' || !error.response) {
+        return rejectWithValue('network_error');
+      }
       return rejectWithValue(error.response?.data || 'Ошибка переименования канала');
     }
   }

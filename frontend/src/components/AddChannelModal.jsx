@@ -5,10 +5,12 @@ import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { addChannel } from '../slices/channelsSlice';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from './NotificationManager';
 
 const AddChannelModal = ({ show, onHide }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { showChannelCreated, showError } = useNotifications();
   const existingChannels = useSelector(state => state.channels.channels);
 
   const validationSchema = useMemo(() => Yup.object({
@@ -29,7 +31,8 @@ const AddChannelModal = ({ show, onHide }) => {
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
-      await dispatch(addChannel(values.name)).unwrap();
+      const result = await dispatch(addChannel(values.name)).unwrap();
+      showChannelCreated(values.name);
       resetForm();
       onHide();
     } catch (error) {
@@ -39,6 +42,7 @@ const AddChannelModal = ({ show, onHide }) => {
         setFieldError('name', t('channels.validation.nameUnique'));
       } else {
         setFieldError('name', error?.message || t('channels.error.add'));
+        showError(error?.message || t('channels.error.add'));
       }
     } finally {
       setSubmitting(false);

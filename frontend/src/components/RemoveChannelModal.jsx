@@ -3,17 +3,21 @@ import { Modal, Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
 import { removeChannel } from '../slices/channelsSlice';
 import { useTranslation } from 'react-i18next';
+import { useNotifications } from './NotificationManager';
 
 const RemoveChannelModal = ({ show, onHide, channel }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const { showChannelRemoved, showError } = useNotifications();
 
   const handleRemove = async () => {
     try {
       await dispatch(removeChannel(channel.id)).unwrap();
+      showChannelRemoved(channel.name);
       onHide();
     } catch (error) {
       console.error('Ошибка удаления канала:', error);
+      showError(error?.message || t('channels.error.remove'));
     }
   };
 

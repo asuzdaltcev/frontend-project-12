@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addMessageFromSocket, setSocketStatus } from '../slices/messagesSlice';
 import { updateChannelsFromSocket } from '../slices/channelsSlice';
 import socketService from '../services/socketService';
+import { useNotifications } from './NotificationManager';
 
 const WebSocketManager = () => {
   const dispatch = useDispatch();
+  const { showConnected, showDisconnected, showConnecting } = useNotifications();
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -35,18 +37,36 @@ const WebSocketManager = () => {
       dispatch(setSocketStatus(socketService.getConnectionStatus()));
     };
 
+    // Обработчики событий соединения с уведомлениями
+    const handleConnect = () => {
+      updateConnectionStatus();
+      showConnected();
+    };
+
+    const handleDisconnect = () => {
+      updateConnectionStatus();
+      showDisconnected();
+    };
+
+    const handleConnecting = () => {
+      updateConnectionStatus();
+      showConnecting();
+    };
+
     // Обновляем статус при подключении/отключении
-    socket.on('connect', updateConnectionStatus);
-    socket.on('disconnect', updateConnectionStatus);
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('connecting', handleConnecting);
 
     // Очистка при размонтировании
     return () => {
       socketService.off('newMessage', handleNewMessage);
       socketService.off('channelUpdate', handleChannelUpdate);
-      socket.off('connect', updateConnectionStatus);
-      socket.off('disconnect', updateConnectionStatus);
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('connecting', handleConnecting);
     };
-  }, [dispatch, token]);
+  }, [dispatch, token, showConnected, showDisconnected, showConnecting]);
 
   // Компонент не рендерит ничего видимого
   return null;
