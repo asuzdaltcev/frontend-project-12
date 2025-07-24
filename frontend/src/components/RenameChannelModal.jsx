@@ -6,11 +6,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { renameChannel } from '../slices/channelsSlice';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from './NotificationManager';
+import profanityFilter from '../utils/profanityFilter';
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { showChannelRenamed, showError } = useNotifications();
+  const { showChannelRenamed, showError, showWarning } = useNotifications();
   const existingChannels = useSelector(state => state.channels.channels);
 
   const validationSchema = useMemo(() => Yup.object({
@@ -27,11 +28,24 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
           existingChannel.name.toLowerCase() === normalizedValue
         );
         return !isDuplicate;
+      })
+      .test('profanity', t('profanity.error.channelNameProfanity'), function(value) {
+        if (!value) return true; // Пропускаем пустые значения
+        return !profanityFilter.check(value);
       }),
   }), [t, existingChannels, channel]);
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
+      // Проверяем на нецензурные слова перед отправкой
+      const profanityResult = profanityFilter.process(values.name);
+      
+      if (profanityResult.hasProfanity) {
+        setFieldError('name', t('profanity.error.channelNameProfanity'));
+        showError(t('profanity.error.channelNameProfanity'));
+        return;
+      }
+
       const result = await dispatch(renameChannel({ id: channel.id, name: values.name })).unwrap();
       showChannelRenamed(values.name);
       resetForm();

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import socketService from '../services/socketService';
+import profanityFilter from '../utils/profanityFilter';
 
 // Асинхронное действие для получения сообщений
 export const fetchMessages = createAsyncThunk(
@@ -13,7 +14,14 @@ export const fetchMessages = createAsyncThunk(
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      
+      // Фильтруем нецензурные слова в полученных сообщениях
+      const filteredMessages = response.data.map(message => ({
+        ...message,
+        body: profanityFilter.clean(message.body)
+      }));
+      
+      return filteredMessages;
     } catch (error) {
       return rejectWithValue(error.response?.data || 'Ошибка загрузки сообщений');
     }
@@ -130,7 +138,12 @@ const messagesSlice = createSlice({
       // Проверяем, нет ли уже такого сообщения
       const exists = state.messages.find(msg => msg.id === newMessage.id);
       if (!exists) {
-        state.messages.push(newMessage);
+        // Фильтруем нецензурные слова в сообщении
+        const filteredMessage = {
+          ...newMessage,
+          body: profanityFilter.clean(newMessage.body)
+        };
+        state.messages.push(filteredMessage);
       }
     },
     // Обновляем статус WebSocket соединения
@@ -168,7 +181,8 @@ const messagesSlice = createSlice({
         const { id, body } = action.payload;
         const message = state.messages.find(msg => msg.id === id);
         if (message) {
-          message.body = body;
+          // Фильтруем нецензурные слова при редактировании
+          message.body = profanityFilter.clean(body);
         }
       })
       // removeMessage

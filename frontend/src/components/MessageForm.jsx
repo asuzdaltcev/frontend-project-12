@@ -6,18 +6,23 @@ import { addMessage, addMessageOptimistic } from '../slices/messagesSlice';
 import { Form, Button, InputGroup, Spinner } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useNotifications } from './NotificationManager';
+import profanityFilter from '../utils/profanityFilter';
 
 const MessageForm = ({ channelId }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const { showMessageSent, showError } = useNotifications();
+  const { showMessageSent, showError, showWarning } = useNotifications();
 
   const validationSchema = useMemo(() => Yup.object({
     body: Yup.string()
       .trim()
       .min(1, t('messages.validation.empty'))
       .max(1000, t('messages.validation.tooLong'))
-      .required(t('messages.validation.required')),
+      .required(t('messages.validation.required'))
+      .test('profanity', t('profanity.error.messageProfanity'), function(value) {
+        if (!value) return true; // Пропускаем пустые значения
+        return !profanityFilter.check(value);
+      }),
   }), [t]);
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -28,10 +33,21 @@ const MessageForm = ({ channelId }) => {
 
     const username = localStorage.getItem('username');
     
+    // Проверяем и фильтруем нецензурные слова
+    const profanityResult = profanityFilter.process(values.body);
+    
+    // Если есть нецензурные слова, показываем предупреждение
+    if (profanityResult.hasProfanity) {
+      showWarning(t('profanity.warning.filtered'));
+    }
+    
+    // Используем очищенный текст для отправки
+    const cleanedMessage = profanityResult.cleanedText;
+    
     // Создаем временное сообщение для оптимистичного обновления
     const tempMessage = {
       id: `temp-${Date.now()}`,
-      body: values.body,
+      body: cleanedMessage, // Используем очищенный текст
       channelId,
       username,
       createdAt: new Date().toISOString(),
@@ -45,8 +61,8 @@ const MessageForm = ({ channelId }) => {
       // Сбрасываем форму сразу для лучшего UX
       resetForm();
       
-      // Отправляем сообщение через WebSocket/HTTP
-      await dispatch(addMessage({ body: values.body, channelId })).unwrap();
+      // Отправляем очищенное сообщение через WebSocket/HTTP
+      await dispatch(addMessage({ body: cleanedMessage, channelId })).unwrap();
       
       // Показываем уведомление об успешной отправке
       showMessageSent();
