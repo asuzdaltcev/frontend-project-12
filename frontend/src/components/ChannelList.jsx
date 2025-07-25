@@ -28,18 +28,25 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
         ) : (
           channels.map(channel => (
             <ListGroup.Item
-              as="button"
+              as="li"
               key={channel.id}
-              action
-              active={channel.id === currentChannelId}
-              onClick={() => onChannelSelect(channel.id)}
               className="d-flex align-items-center justify-content-between channel-item"
             >
-              <span className="channel-name text-truncate">{channel.name}</span>
-              <ChannelDropdown 
-                channel={channel} 
-                onClick={(e) => e.stopPropagation()}
-              />
+              <button
+                type="button"
+                className={`channel-name text-truncate btn btn-link p-0 m-0 text-start flex-grow-1${channel.id === currentChannelId ? ' active' : ''}`}
+                onClick={() => onChannelSelect(channel.id)}
+                aria-current={channel.id === currentChannelId}
+                style={{ textDecoration: 'none' }}
+              >
+                {channel.name}
+              </button>
+              <div className="ms-2">
+                <ChannelDropdown 
+                  channel={channel} 
+                  onClick={e => e.stopPropagation()}
+                />
+              </div>
             </ListGroup.Item>
           ))
         )}
