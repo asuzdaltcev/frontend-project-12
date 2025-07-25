@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchChannels, setCurrentChannel } from '../slices/channelsSlice';
+import { fetchChannels, setCurrentChannel, addChannel } from '../slices/channelsSlice';
 import { fetchMessages } from '../slices/messagesSlice';
 import ChatInterface from '../components/ChatInterface';
 import { Container, Alert, Spinner } from 'react-bootstrap';
@@ -18,6 +18,13 @@ const Home = () => {
     dispatch(fetchChannels());
     dispatch(fetchMessages());
   }, [dispatch]);
+
+  // Создаем канал General по умолчанию, если каналов нет
+  useEffect(() => {
+    if (channels.length === 0 && !channelsLoading && !channelsError) {
+      dispatch(addChannel('general'));
+    }
+  }, [channels.length, channelsLoading, channelsError, dispatch]);
 
   // Обработка ошибок загрузки данных
   useEffect(() => {

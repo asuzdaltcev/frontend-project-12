@@ -14,11 +14,18 @@ const ChannelDropdown = ({ channel }) => {
     <>
       <Dropdown align="end">
         <Dropdown.Toggle 
+          as="div"
           variant="light" 
           size="sm"
           className="channel-dropdown-toggle"
         >
-          Управление каналом
+          <button
+            type="button"
+            className="btn btn-light btn-sm"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Управление каналом
+          </button>
         </Dropdown.Toggle>
 
         <Dropdown.Menu>

@@ -32,15 +32,19 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
               key={channel.id}
               className="d-flex align-items-center justify-content-between channel-item"
             >
-              <button
-                type="button"
-                className={`channel-name text-truncate btn btn-link p-0 m-0 text-start flex-grow-1${channel.id === currentChannelId ? ' active' : ''}`}
-                onClick={() => onChannelSelect(channel.id)}
-                aria-current={channel.id === currentChannelId}
-                style={{ textDecoration: 'none' }}
-              >
-                {channel.name}
-              </button>
+              <div className="d-flex align-items-center flex-grow-1">
+                <button
+                  type="button"
+                  name={channel.name}
+                  className={`channel-name text-truncate btn btn-link p-0 m-0 text-start${channel.id === currentChannelId ? ' active' : ''}`}
+                  onClick={() => onChannelSelect(channel.id)}
+                  aria-current={channel.id === currentChannelId}
+                  style={{ textDecoration: 'none' }}
+                >
+                  <span>#</span>
+                  {channel.name}
+                </button>
+              </div>
               <div className="ms-2">
                 <ChannelDropdown 
                   channel={channel} 
