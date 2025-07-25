@@ -28,13 +28,14 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
         ) : (
           channels.map(channel => (
             <ListGroup.Item
+              as="button"
               key={channel.id}
               action
               active={channel.id === currentChannelId}
               onClick={() => onChannelSelect(channel.id)}
               className="d-flex align-items-center justify-content-between channel-item"
             >
-              <span className="channel-name text-truncate"># {channel.name}</span>
+              <span className="channel-name text-truncate">{channel.name}</span>
               <ChannelDropdown 
                 channel={channel} 
                 onClick={(e) => e.stopPropagation()}
