@@ -45,7 +45,8 @@ const Signup = () => {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', values.username);
-        navigate('/');
+        // Принудительное обновление для обновления состояния авторизации
+        window.location.href = '/';
       } else {
         const errorData = await response.json();
         if (response.status === 409) {

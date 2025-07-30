@@ -58,6 +58,8 @@ const ChannelDropdown = ({
           isActive ? 'btn-primary' : 'btn-secondary'
         }`}
         onClick={handleChannelSelect}
+        name={channel.name}
+        aria-label={channel.name}
       >
         <span className="me-1" style={{ color: 'inherit' }}>#</span>
         {channel.name}

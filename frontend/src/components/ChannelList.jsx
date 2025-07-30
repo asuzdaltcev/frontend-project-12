@@ -87,6 +87,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     type="button"
                     className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
+                    name={channel.name}
+                    aria-label={channel.name}
                   >
                     <span className="me-1" style={{ color: 'inherit' }}>#</span>{channel.name}
                   </button>
