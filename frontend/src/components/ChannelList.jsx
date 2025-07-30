@@ -71,9 +71,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     type="button"
                     className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
-                    aria-label={channel.name}
                   >
-                    <span className="me-1">#</span>{channel.name}
+                    <span className="me-1" style={{ color: 'inherit' }}>#</span>{channel.name}
                   </button>
                     <ChannelDropdown 
                       channel={channel} 
@@ -84,9 +83,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     type="button"
                     className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
-                    aria-label={channel.name}
                   >
-                    <span className="me-1">#</span>{channel.name}
+                    <span className="me-1" style={{ color: 'inherit' }}>#</span>{channel.name}
                   </button>
                 )}
               </li>
