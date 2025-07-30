@@ -69,6 +69,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                       type="button"
                       className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                       onClick={() => onChannelSelect(channel.id)}
+                      aria-label={channel.name}
                     >
                       <span className="me-1">#</span>
                       {channel.name}
@@ -82,6 +83,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     type="button"
                     className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
+                    aria-label={channel.name}
                   >
                     <span className="me-1">#</span>
                     {channel.name}
