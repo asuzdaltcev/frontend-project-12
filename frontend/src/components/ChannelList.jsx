@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
 import AddChannelModal from './AddChannelModal';
 import ChannelDropdown from './ChannelDropdown';
 import './ChannelList.css';
@@ -9,9 +8,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
 
   // Проверяем, является ли канал системным (general или random)
   const isSystemChannel = (channelName) => {
-    const result = channelName === 'general' || channelName === 'random';
-    console.log(`🔍 Channel "${channelName}" isSystemChannel:`, result);
-    return result;
+    return channelName === 'general' || channelName === 'random';
   };
 
   // Дедуплицируем каналы по имени (для системных каналов берем первый)
@@ -33,13 +30,12 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   }, new Map()).values();
 
   const uniqueChannelsArray = Array.from(uniqueChannels);
-  console.log('📋 All channels:', uniqueChannelsArray.map(c => c.name));
 
   return (
     <>
       <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
         <b>Каналы</b>
-        <Button
+        <button
           type="button"
           className="p-0 text-primary btn btn-group-vertical"
           onClick={() => setShowAddModal(true)}
@@ -49,7 +45,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"></path>
           </svg>
           <span className="visually-hidden">+</span>
-        </Button>
+        </button>
       </div>
       
       <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
@@ -60,35 +56,32 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
         ) : (
           uniqueChannelsArray.map(channel => {
             const shouldShowDropdown = !isSystemChannel(channel.name);
-            console.log(`🎯 Channel "${channel.name}" (ID: ${channel.id}): shouldShowDropdown = ${shouldShowDropdown}`);
             
             return (
               <li key={`${channel.id}-${channel.name}`} className="nav-item w-100">
                 {shouldShowDropdown ? (
                   <div role="group" className="d-flex dropdown btn-group">
-                    <Button
-                      type="button"
-                      className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
-                      onClick={() => onChannelSelect(channel.id)}
-                      aria-label={channel.name}
-                    >
-                      <span className="me-1">#</span>
-                      {channel.name}
-                    </Button>
+                                      <button
+                    type="button"
+                    className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
+                    onClick={() => onChannelSelect(channel.id)}
+                    aria-label={channel.name}
+                  >
+                    <span className="me-1">#</span>{channel.name}
+                  </button>
                     <ChannelDropdown 
                       channel={channel} 
                     />
                   </div>
                 ) : (
-                  <Button
+                  <button
                     type="button"
                     className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
                     aria-label={channel.name}
                   >
-                    <span className="me-1">#</span>
-                    {channel.name}
-                  </Button>
+                    <span className="me-1">#</span>{channel.name}
+                  </button>
                 )}
               </li>
             );
