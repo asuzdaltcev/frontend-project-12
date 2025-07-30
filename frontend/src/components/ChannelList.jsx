@@ -91,12 +91,12 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                   // Системные каналы - простая кнопка без dropdown
                   <button
                     type="button"
-                    className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-secondary' : ''}`}
                     onClick={() => onChannelSelect(channel.id)}
                     name={channel.name}
                     aria-label={channel.name}
                   >
-                    # {channel.name}
+                    <span className="me-1">#</span>{channel.name}
                   </button>
                 ) : (
                   // Пользовательские каналы - с dropdown

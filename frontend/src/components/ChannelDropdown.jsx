@@ -55,13 +55,13 @@ const ChannelDropdown = ({
       <button
         type="button"
         className={`flex-grow-1 rounded-0 text-start text-truncate btn ${
-          isActive ? 'btn-primary' : 'btn-secondary'
+          isActive ? 'btn-secondary' : ''
         }`}
         onClick={handleChannelSelect}
         name={channel.name}
         aria-label={channel.name}
       >
-        # {channel.name}
+        <span className="me-1">#</span>{channel.name}
       </button>
       
       {/* Кнопка выпадающего меню только если есть доступные действия */}
