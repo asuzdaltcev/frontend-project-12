@@ -5,6 +5,31 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
 
+// Функция для создания системных каналов
+const createSystemChannels = async (token) => {
+  const systemChannels = ['general', 'random'];
+  
+  for (const channelName of systemChannels) {
+    try {
+      const response = await fetch('/api/v1/channels', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: channelName }),
+      });
+      
+      if (!response.ok && response.status !== 409) {
+        // Игнорируем ошибку 409 (канал уже существует)
+        console.warn(`Не удалось создать канал ${channelName}:`, response.status);
+      }
+    } catch (error) {
+      console.warn(`Ошибка создания канала ${channelName}:`, error);
+    }
+  }
+};
+
 const Signup = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -45,6 +70,14 @@ const Signup = () => {
         const data = await response.json();
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', values.username);
+        
+        // Создаем системные каналы если их нет
+        try {
+          await createSystemChannels(data.token);
+        } catch (channelError) {
+          console.warn('Не удалось создать системные каналы:', channelError);
+        }
+        
         // Принудительное обновление для обновления состояния авторизации
         window.location.href = '/';
       } else {

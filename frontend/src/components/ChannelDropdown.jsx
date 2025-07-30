@@ -59,10 +59,9 @@ const ChannelDropdown = ({
         }`}
         onClick={handleChannelSelect}
         name={channel.name}
-        aria-label={channel.name}
       >
-        <span className="me-1" style={{ color: 'inherit' }}>#</span>
-        {channel.name}
+        <span className="me-1" style={{ color: 'inherit' }} aria-hidden="true">#</span>
+        <span>{channel.name}</span>
       </button>
       
       {/* Кнопка выпадающего меню только если есть доступные действия */}
