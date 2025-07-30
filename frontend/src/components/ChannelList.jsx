@@ -39,13 +39,17 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
 
   // Обработчики для действий с каналами
   const handleRenameChannel = (channel) => {
-    // TODO: Реализовать логику переименования
-    console.log('Переименование канала:', channel);
+    // Заглушка для переименования канала
+    // В реальном приложении здесь будет открытие модального окна
+    alert(`Переименование канала: ${channel.name}`);
   };
 
   const handleRemoveChannel = (channel) => {
-    // TODO: Реализовать логику удаления
-    console.log('Удаление канала:', channel);
+    // Заглушка для удаления канала
+    // В реальном приложении здесь будет подтверждение и удаление
+    if (confirm(`Удалить канал "${channel.name}"?`)) {
+      alert(`Канал "${channel.name}" удален`);
+    }
   };
 
   return (
