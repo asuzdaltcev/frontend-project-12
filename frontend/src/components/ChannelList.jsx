@@ -5,6 +5,9 @@ import './ChannelList.css';
 
 const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   const [showAddModal, setShowAddModal] = useState(false);
+  
+  // Отладка: логируем каналы
+
 
   // Проверяем, является ли канал системным (general или random)
   const isSystemChannel = (channelName) => {
@@ -79,6 +82,9 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
             const isSystem = isSystemChannel(channel.name);
             const isActive = channel.id === currentChannelId;
             
+            // Отладка: логируем каждый канал
+    
+            
             return (
               <li key={`${channel.id}-${channel.name}`} className="nav-item w-100">
                 {isSystem ? (
@@ -88,9 +94,9 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
                     name={channel.name}
+                    aria-label={channel.name}
                   >
-                    <span className="me-1" style={{ color: 'inherit' }} aria-hidden="true">#</span>
-                    <span>{channel.name}</span>
+                    # {channel.name}
                   </button>
                 ) : (
                   // Пользовательские каналы - с dropdown

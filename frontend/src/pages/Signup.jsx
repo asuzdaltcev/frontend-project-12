@@ -11,6 +11,7 @@ const createSystemChannels = async (token) => {
   
   for (const channelName of systemChannels) {
     try {
+
       const response = await fetch('/api/v1/channels', {
         method: 'POST',
         headers: {
@@ -20,8 +21,11 @@ const createSystemChannels = async (token) => {
         body: JSON.stringify({ name: channelName }),
       });
       
-      if (!response.ok && response.status !== 409) {
-        // Игнорируем ошибку 409 (канал уже существует)
+      if (response.ok) {
+        // Канал создан успешно
+      } else if (response.status === 409) {
+        // Канал уже существует - это нормально
+      } else {
         console.warn(`Не удалось создать канал ${channelName}:`, response.status);
       }
     } catch (error) {
@@ -51,6 +55,8 @@ const Signup = () => {
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
+
+
     setIsSubmitting(true);
     setError('');
 
@@ -66,6 +72,8 @@ const Signup = () => {
         }),
       });
 
+      
+
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
@@ -77,7 +85,6 @@ const Signup = () => {
         } catch (channelError) {
           console.warn('Не удалось создать системные каналы:', channelError);
         }
-        
         // Принудительное обновление для обновления состояния авторизации
         window.location.href = '/';
       } else {
