@@ -95,6 +95,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     onClick={() => onChannelSelect(channel.id)}
                     name={channel.name}
                     aria-label={channel.name}
+                    role="button"
                   >
                     {channel.name}
                   </button>
