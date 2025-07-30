@@ -96,7 +96,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                     name={channel.name}
                     aria-label={channel.name}
                   >
-                    <span className="me-1">#</span>{channel.name}
+                    {channel.name}
                   </button>
                 ) : (
                   // Пользовательские каналы - с dropdown
