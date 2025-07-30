@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import AddChannelModal from './AddChannelModal';
 import ChannelDropdown from './ChannelDropdown';
+import './ChannelList.css';
 
 const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -67,11 +68,14 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                   <div role="group" className="d-flex dropdown btn-group">
                     <Button
                       type="button"
-                      className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
+                      className={`w-100 rounded-0 text-start text-truncate btn channel-button ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                       onClick={() => onChannelSelect(channel.id)}
                       aria-label={channel.name}
+                      style={{ 
+                        position: 'relative',
+                        paddingLeft: '2rem'
+                      }}
                     >
-                      <span className="me-1" aria-hidden="true">#</span>
                       {channel.name}
                     </Button>
                     <ChannelDropdown 
@@ -81,11 +85,14 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                 ) : (
                   <Button
                     type="button"
-                    className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`w-100 rounded-0 text-start btn channel-button ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
                     aria-label={channel.name}
+                    style={{ 
+                      position: 'relative',
+                      paddingLeft: '2rem'
+                    }}
                   >
-                    <span className="me-1" aria-hidden="true">#</span>
                     {channel.name}
                   </Button>
                 )}

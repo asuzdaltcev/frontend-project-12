@@ -1,0 +1,8 @@
+.channel-button::before {
+  content: "#";
+  position: absolute;
+  left: 0.75rem;
+  color: inherit;
+  pointer-events: none;
+  user-select: none;
+} 
