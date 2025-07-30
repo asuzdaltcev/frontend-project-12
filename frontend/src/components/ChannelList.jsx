@@ -11,14 +11,20 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
     return channelName === 'general' || channelName === 'random';
   };
 
-  // Дедуплицируем каналы по имени (для системных каналов берем первый)
+  // Дедуплицируем каналы по имени (для системных каналов берем системный)
   const uniqueChannels = channels.reduce((acc, channel) => {
     const normalizedName = channel.name.toLowerCase();
     
-    // Для системных каналов берем только первый
+    // Для системных каналов берем только системный (removable: false)
     if (isSystemChannel(channel.name)) {
       if (!acc.has(normalizedName)) {
         acc.set(normalizedName, channel);
+      } else {
+        // Если уже есть канал с таким именем, заменяем на системный
+        const existingChannel = acc.get(normalizedName);
+        if (channel.removable === false && existingChannel.removable !== false) {
+          acc.set(normalizedName, channel);
+        }
       }
     } else {
       // Для пользовательских каналов дедуплицируем по ID
