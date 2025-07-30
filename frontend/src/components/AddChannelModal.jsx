@@ -20,6 +20,11 @@ const AddChannelModal = ({ show, onHide }) => {
       .max(20, t('channels.validation.nameLength'))
       .matches(/^[a-zA-Z0-9\s-]+$/, t('channels.validation.nameFormat'))
       .required(t('channels.validation.nameRequired'))
+      .test('system', 'Нельзя создать канал с именем системного канала', function(value) {
+        if (!value) return true;
+        const normalizedValue = value.trim().toLowerCase();
+        return normalizedValue !== 'general' && normalizedValue !== 'random';
+      })
       .test('unique', t('channels.validation.nameUnique'), function(value) {
         if (!value) return true; // Пропускаем пустые значения, их обработает required
         const normalizedValue = value.trim().toLowerCase();

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchChannels, setCurrentChannel, addChannel } from '../slices/channelsSlice';
+import { fetchChannels, setCurrentChannel } from '../slices/channelsSlice';
 import { fetchMessages } from '../slices/messagesSlice';
 import ChatInterface from '../components/ChatInterface';
 import { Container, Alert, Spinner } from 'react-bootstrap';
@@ -18,13 +18,6 @@ const Home = () => {
     dispatch(fetchChannels());
     dispatch(fetchMessages());
   }, [dispatch]);
-
-  // Создаем канал General по умолчанию, если каналов нет
-  useEffect(() => {
-    if (channels.length === 0 && !channelsLoading && !channelsError) {
-      dispatch(addChannel('general'));
-    }
-  }, [channels.length, channelsLoading, channelsError, dispatch]);
 
   // Обработка ошибок загрузки данных
   useEffect(() => {
@@ -47,16 +40,17 @@ const Home = () => {
     }
   }, [messagesError, showNetworkError, showLoadingError]);
 
-  // Автоматически выбираем канал General при загрузке
+  // Автоматически выбираем канал по умолчанию при загрузке
   useEffect(() => {
     if (channels.length > 0) {
+      // Сначала ищем канал general
       const generalChannel = channels.find(channel => 
         channel.name.toLowerCase() === 'general'
       );
       if (generalChannel) {
         dispatch(setCurrentChannel(generalChannel.id));
-      } else if (channels.length > 0) {
-        // Если канала General нет, выбираем первый доступный
+      } else {
+        // Если канала general нет, выбираем первый доступный
         dispatch(setCurrentChannel(channels[0].id));
       }
     }
