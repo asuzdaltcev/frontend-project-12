@@ -68,14 +68,11 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                   <div role="group" className="d-flex dropdown btn-group">
                     <Button
                       type="button"
-                      className={`w-100 rounded-0 text-start text-truncate btn channel-button ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
+                      className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                       onClick={() => onChannelSelect(channel.id)}
                       aria-label={channel.name}
-                      style={{ 
-                        position: 'relative',
-                        paddingLeft: '2rem'
-                      }}
                     >
+                      <span aria-hidden="true" className="me-1">#</span>
                       {channel.name}
                     </Button>
                     <ChannelDropdown 
@@ -85,14 +82,11 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
                 ) : (
                   <Button
                     type="button"
-                    className={`w-100 rounded-0 text-start btn channel-button ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
                     aria-label={channel.name}
-                    style={{ 
-                      position: 'relative',
-                      paddingLeft: '2rem'
-                    }}
                   >
+                    <span aria-hidden="true" className="me-1">#</span>
                     {channel.name}
                   </Button>
                 )}
