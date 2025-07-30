@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
-import RenameChannelModal from './RenameChannelModal';
-import RemoveChannelModal from './RemoveChannelModal';
 
-const ChannelDropdown = ({ channel }) => {
-  const [showRenameModal, setShowRenameModal] = useState(false);
-  const [showRemoveModal, setShowRemoveModal] = useState(false);
+const ChannelDropdown = ({ 
+  channel, 
+  onRename, 
+  onRemove, 
+  isRemovable = true, 
+  isRenamable = true, 
+  isActive = false, 
+  onSelect 
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef();
 
-  console.log(`🔧 ChannelDropdown для канала "${channel.name}" (ID: ${channel.id})`);
-
-  // Закрываем dropdown при клике вне его
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -25,97 +26,80 @@ const ChannelDropdown = ({ channel }) => {
   }, []);
 
   const handleToggle = (e) => {
-    console.log(`🖱️ Клик по кнопке управления канала "${channel.name}"`);
     e.stopPropagation();
     setIsOpen(!isOpen);
   };
 
-  const handleRenameClick = (e) => {
-    console.log(`📝 Открываем модал переименования для канала "${channel.name}"`);
+  const handleRename = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    onRename(channel);
     setIsOpen(false);
-    setShowRenameModal(true);
   };
 
-  const handleRemoveClick = (e) => {
-    console.log(`🗑️ Открываем модал удаления для канала "${channel.name}"`);
+  const handleRemove = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    onRemove(channel);
     setIsOpen(false);
-    setShowRemoveModal(true);
+  };
+
+  const handleChannelSelect = (e) => {
+    e.stopPropagation();
+    onSelect && onSelect(channel.id);
   };
 
   return (
-    <>
-      <div className="dropdown" ref={dropdownRef} style={{ position: 'relative' }}>
+    <div className="d-flex dropdown btn-group w-100" ref={dropdownRef}>
+      {/* Основная кнопка канала */}
+      <button
+        type="button"
+        className={`flex-grow-1 rounded-0 text-start text-truncate btn ${
+          isActive ? 'btn-primary' : 'btn-secondary'
+        }`}
+        onClick={handleChannelSelect}
+      >
+        <span className="me-1" style={{ color: 'inherit' }}>#</span>
+        {channel.name}
+      </button>
+      
+      {/* Кнопка выпадающего меню только если есть доступные действия */}
+      {(isRemovable || isRenamable) && (
         <button
-          className="btn btn-secondary dropdown-toggle dropdown-toggle-split flex-grow-0"
           type="button"
+          className="flex-grow-0 dropdown-toggle dropdown-toggle-split btn btn-secondary"
           onClick={handleToggle}
           aria-expanded={isOpen}
           aria-label="Управление каналом"
         >
-          <span className="visually-hidden">Управление каналом</span>
+          <span className="visually-hidden">Меню</span>
         </button>
-
-        <ul 
-          className={`dropdown-menu ${isOpen ? 'show' : ''}`}
-          style={{
-            position: 'absolute',
-            top: '100%',
-            right: '0',
-            zIndex: 1000,
-            minWidth: '200px'
-          }}
-        >
-          <li>
-            <a
-              className="dropdown-item d-flex align-items-center text-danger"
-              href="#"
-              role="button"
-              tabIndex="0"
-              onClick={handleRemoveClick}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleRemoveClick(e);
-                }
-              }}
+      )}
+      
+      {/* Выпадающее меню */}
+      {isOpen && (isRemovable || isRenamable) && (
+        <div className="dropdown-menu show">
+          {isRenamable && (
+            <button
+              className="dropdown-item"
+              type="button"
+              onClick={handleRename}
             >
-              🗑️ Удалить
-            </a>
-          </li>
-          <li>
-            <a
-              className="dropdown-item d-flex align-items-center"
-              href="#"
-              role="button"
-              tabIndex="0"
-              onClick={handleRenameClick}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  handleRenameClick(e);
-                }
-              }}
+              Переименовать
+            </button>
+          )}
+          {isRemovable && (
+            <button
+              className="dropdown-item text-danger"
+              type="button"
+              onClick={handleRemove}
             >
-              ✏️ Переименовать
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <RenameChannelModal
-        show={showRenameModal}
-        onHide={() => setShowRenameModal(false)}
-        channel={channel}
-      />
-
-      <RemoveChannelModal
-        show={showRemoveModal}
-        onHide={() => setShowRemoveModal(false)}
-        channel={channel}
-      />
-    </>
+              Удалить
+            </button>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

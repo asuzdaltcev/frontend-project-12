@@ -37,6 +37,17 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
 
   const uniqueChannelsArray = Array.from(uniqueChannels);
 
+  // Обработчики для действий с каналами
+  const handleRenameChannel = (channel) => {
+    // TODO: Реализовать логику переименования
+    console.log('Переименование канала:', channel);
+  };
+
+  const handleRemoveChannel = (channel) => {
+    // TODO: Реализовать логику удаления
+    console.log('Удаление канала:', channel);
+  };
+
   return (
     <>
       <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
@@ -61,31 +72,31 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
           </li>
         ) : (
           uniqueChannelsArray.map(channel => {
-            const shouldShowDropdown = !isSystemChannel(channel.name);
+            const isSystem = isSystemChannel(channel.name);
+            const isActive = channel.id === currentChannelId;
             
             return (
               <li key={`${channel.id}-${channel.name}`} className="nav-item w-100">
-                {shouldShowDropdown ? (
-                  <div role="group" className="d-flex dropdown btn-group">
-                                      <button
-                    type="button"
-                    className={`w-100 rounded-0 text-start text-truncate btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
-                    onClick={() => onChannelSelect(channel.id)}
-                  >
-                    <span className="me-1" style={{ color: 'inherit' }}>#</span>{channel.name}
-                  </button>
-                    <ChannelDropdown 
-                      channel={channel} 
-                    />
-                  </div>
-                ) : (
+                {isSystem ? (
+                  // Системные каналы - простая кнопка без dropdown
                   <button
                     type="button"
-                    className={`w-100 rounded-0 text-start btn ${channel.id === currentChannelId ? 'btn-primary' : 'btn-secondary'}`}
+                    className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-primary' : 'btn-secondary'}`}
                     onClick={() => onChannelSelect(channel.id)}
                   >
                     <span className="me-1" style={{ color: 'inherit' }}>#</span>{channel.name}
                   </button>
+                ) : (
+                  // Пользовательские каналы - с dropdown
+                  <ChannelDropdown 
+                    channel={channel}
+                    isActive={isActive}
+                    isRemovable={channel.removable !== false}
+                    isRenamable={channel.removable !== false}
+                    onSelect={onChannelSelect}
+                    onRename={handleRenameChannel}
+                    onRemove={handleRemoveChannel}
+                  />
                 )}
               </li>
             );
