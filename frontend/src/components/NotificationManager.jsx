@@ -57,7 +57,7 @@ export const useNotifications = () => {
 
   // Специализированные методы для каналов
   const showChannelCreated = (channelName) => {
-    showSuccess(t('notifications.success.channelCreated', { name: channelName }));
+    showSuccess(t('notifications.success.channelCreated'));
   };
 
   const showChannelRenamed = (channelName) => {
