@@ -132,6 +132,32 @@ const channelsSlice = createSlice({
         state.currentChannelId = state.channels[0]?.id || null;
       }
     },
+    // Добавление нового канала через WebSocket
+    addChannelFromSocket: (state, action) => {
+      const newChannel = action.payload;
+      const exists = state.channels.find(ch => ch.id === newChannel.id);
+      if (!exists) {
+        state.channels.push(newChannel);
+      }
+    },
+    // Удаление канала через WebSocket
+    removeChannelFromSocket: (state, action) => {
+      const channelId = action.payload;
+      state.channels = state.channels.filter(ch => ch.id !== channelId);
+      
+      // Если текущий канал был удален, переключаемся на первый доступный
+      if (state.currentChannelId === channelId) {
+        state.currentChannelId = state.channels[0]?.id || null;
+      }
+    },
+    // Переименование канала через WebSocket
+    renameChannelFromSocket: (state, action) => {
+      const { id, name } = action.payload;
+      const channel = state.channels.find(ch => ch.id === id);
+      if (channel) {
+        channel.name = name;
+      }
+    },
     // Обновляем статус WebSocket соединения
     setSocketStatus: (state, action) => {
       state.socketConnected = action.payload;
@@ -185,6 +211,9 @@ export const {
   removeChannelOptimistic, 
   renameChannelOptimistic,
   updateChannelsFromSocket,
+  addChannelFromSocket,
+  removeChannelFromSocket,
+  renameChannelFromSocket,
   setSocketStatus
 } = channelsSlice.actions;
 

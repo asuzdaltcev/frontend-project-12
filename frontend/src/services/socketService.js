@@ -79,6 +79,27 @@ class SocketService {
     }
   }
 
+  // Подписка на новые каналы
+  onNewChannel(callback) {
+    if (this.socket) {
+      this.socket.on('newChannel', callback);
+    }
+  }
+
+  // Подписка на удаление каналов
+  onRemoveChannel(callback) {
+    if (this.socket) {
+      this.socket.on('removeChannel', callback);
+    }
+  }
+
+  // Подписка на переименование каналов
+  onRenameChannel(callback) {
+    if (this.socket) {
+      this.socket.on('renameChannel', callback);
+    }
+  }
+
   // Отписка от событий
   off(event, callback) {
     if (this.socket) {

@@ -138,8 +138,17 @@ const messagesSlice = createSlice({
     // Добавляем сообщение через WebSocket
     addMessageFromSocket: (state, action) => {
       const newMessage = action.payload;
-      // Проверяем, нет ли уже такого сообщения
-      const exists = state.messages.find(msg => msg.id === newMessage.id);
+      
+      // Проверяем дублирование по ID или по содержимому + пользователю + каналу
+      const exists = state.messages.find(msg => 
+        msg.id === newMessage.id || 
+        (msg.body === newMessage.body && 
+         msg.username === newMessage.username && 
+         msg.channelId === newMessage.channelId &&
+         // Проверяем что сообщения были отправлены примерно в одно время (в пределах 5 секунд)
+         Math.abs(new Date(msg.createdAt || Date.now()).getTime() - new Date(newMessage.createdAt || Date.now()).getTime()) < 5000)
+      );
+      
       if (!exists) {
         // Фильтруем нецензурные слова в сообщении
         const filteredMessage = {
@@ -176,8 +185,26 @@ const messagesSlice = createSlice({
       })
       // addMessage
       .addCase(addMessage.fulfilled, (state, action) => {
-        // Сообщение уже добавлено через WebSocket или оптимистично
-        // Здесь можно обновить ID если нужно
+        const newMessage = action.payload;
+        
+        // Проверяем, нет ли уже такого сообщения (может прийти через WebSocket быстрее)
+        const exists = state.messages.find(msg => 
+          msg.id === newMessage.id || 
+          (msg.body === newMessage.body && 
+           msg.username === newMessage.username && 
+           msg.channelId === newMessage.channelId &&
+           // Проверяем что сообщения были отправлены недавно (в пределах 5 секунд)
+           Math.abs(new Date(msg.createdAt || Date.now()).getTime() - new Date(newMessage.createdAt || Date.now()).getTime()) < 5000)
+        );
+        
+        if (!exists) {
+          // Фильтруем нецензурные слова в сообщении
+          const filteredMessage = {
+            ...newMessage,
+            body: profanityFilter.clean(newMessage.body)
+          };
+          state.messages.push(filteredMessage);
+        }
       })
       // editMessage
       .addCase(editMessage.fulfilled, (state, action) => {

@@ -1,7 +1,13 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { addMessageFromSocket, setSocketStatus } from '../slices/messagesSlice';
-import { updateChannelsFromSocket } from '../slices/channelsSlice';
+import { 
+  updateChannelsFromSocket, 
+  addChannelFromSocket, 
+  removeChannelFromSocket, 
+  renameChannelFromSocket,
+  setSocketStatus as setChannelSocketStatus
+} from '../slices/channelsSlice';
 import socketService from '../services/socketService';
 
 const WebSocketManager = () => {
@@ -27,17 +33,37 @@ const WebSocketManager = () => {
       dispatch(updateChannelsFromSocket(channels));
     };
 
+    // Обработчик нового канала
+    const handleNewChannel = (channel) => {
+      dispatch(addChannelFromSocket(channel));
+    };
+
+    // Обработчик удаления канала
+    const handleRemoveChannel = (channelId) => {
+      dispatch(removeChannelFromSocket(channelId));
+    };
+
+    // Обработчик переименования канала
+    const handleRenameChannel = (channelData) => {
+      dispatch(renameChannelFromSocket(channelData));
+    };
+
     // Подписываемся на события
     socketService.onNewMessage(handleNewMessage);
     socketService.onChannelUpdate(handleChannelUpdate);
+    socketService.onNewChannel(handleNewChannel);
+    socketService.onRemoveChannel(handleRemoveChannel);
+    socketService.onRenameChannel(handleRenameChannel);
 
     // Обработчики событий соединения
     const handleConnect = () => {
       dispatch(setSocketStatus(true));
+      dispatch(setChannelSocketStatus(true));
     };
 
     const handleDisconnect = () => {
       dispatch(setSocketStatus(false));
+      dispatch(setChannelSocketStatus(false));
     };
 
     const handleReconnect = () => {
@@ -53,6 +79,9 @@ const WebSocketManager = () => {
     return () => {
       socketService.off('newMessage', handleNewMessage);
       socketService.off('channelUpdate', handleChannelUpdate);
+      socketService.off('newChannel', handleNewChannel);
+      socketService.off('removeChannel', handleRemoveChannel);
+      socketService.off('renameChannel', handleRenameChannel);
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
       socket.off('reconnect', handleReconnect);
