@@ -1,11 +1,10 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { ListGroup, Card, Badge } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux'
+import { ListGroup, Card, Badge } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 
 const MessageList = ({ messages }) => {
-  const socketConnected = useSelector(state => state.messages.socketConnected);
-  const { t } = useTranslation();
+  const socketConnected = useSelector(state => state.messages.socketConnected)
+  const { t } = useTranslation()
 
   if (messages.length === 0) {
     return (
@@ -20,7 +19,7 @@ const MessageList = ({ messages }) => {
           </small>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -56,7 +55,7 @@ const MessageList = ({ messages }) => {
         ))}
       </ListGroup>
     </div>
-  );
-};
+  )
+}
 
-export default MessageList; 
+export default MessageList
