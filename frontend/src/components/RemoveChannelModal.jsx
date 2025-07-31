@@ -13,7 +13,7 @@ const RemoveChannelModal = ({ show, onHide, channel }) => {
   const handleRemove = async () => {
     try {
       await dispatch(removeChannel(channel.id)).unwrap();
-      showChannelRemoved(channel.name);
+      showChannelRemoved();
       onHide();
     } catch (error) {
       console.error('Ошибка удаления канала:', error);

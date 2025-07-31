@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AddChannelModal from './AddChannelModal';
 import RenameChannelModal from './RenameChannelModal';
+import RemoveChannelModal from './RemoveChannelModal';
 import ChannelDropdown from './ChannelDropdown';
 import './ChannelList.css';
 
@@ -8,6 +9,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [channelToRename, setChannelToRename] = useState(null);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [channelToRemove, setChannelToRemove] = useState(null);
   
   // Проверяем, является ли канал системным (general или random)
   const isSystemChannel = (channelName) => {
@@ -47,11 +50,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   };
 
   const handleRemoveChannel = (channel) => {
-    // Заглушка для удаления канала
-    // В реальном приложении здесь будет подтверждение и удаление
-    if (confirm(`Удалить канал "${channel.name}"?`)) {
-      alert(`Канал "${channel.name}" удален`);
-    }
+    setChannelToRemove(channel);
+    setShowRemoveModal(true);
   };
 
   return (
@@ -132,6 +132,15 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
           setChannelToRename(null);
         }}
         channel={channelToRename}
+      />
+
+      <RemoveChannelModal
+        show={showRemoveModal}
+        onHide={() => {
+          setShowRemoveModal(false);
+          setChannelToRemove(null);
+        }}
+        channel={channelToRemove}
       />
     </>
   );

@@ -122,7 +122,7 @@ const resources = {
       'notifications.error.unknown': 'Произошла неизвестная ошибка.',
       'notifications.success.channelCreated': 'Канал создан',
       'notifications.success.channelRenamed': 'Канал переименован',
-      'notifications.success.channelRemoved': 'Канал "{{name}}" успешно удален',
+              'notifications.success.channelRemoved': 'Канал удалён',
       'notifications.success.messageSent': 'Сообщение отправлено',
       'notifications.info.connecting': 'Подключение к серверу...',
       'notifications.info.connected': 'Подключение восстановлено',
