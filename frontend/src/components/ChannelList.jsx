@@ -7,6 +7,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   
   // Отладка: логируем каналы
+  console.log('ChannelList: All channels:', channels.map(c => ({ id: c.id, name: c.name, removable: c.removable })));
 
 
   // Проверяем, является ли канал системным (general или random)
@@ -83,6 +84,7 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
             const isActive = channel.id === currentChannelId;
             
             // Отладка: логируем каждый канал
+            console.log(`Channel: ${channel.name}, isSystem: ${isSystem}, removable: ${channel.removable}, id: ${channel.id}`);
     
             
             return (

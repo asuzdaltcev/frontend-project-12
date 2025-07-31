@@ -73,7 +73,7 @@ const ChannelDropdown = ({
           aria-expanded={isOpen}
           aria-label="Управление каналом"
         >
-          <span className="visually-hidden">Меню</span>
+          <span className="visually-hidden">Управление каналом</span>
         </button>
       )}
       
