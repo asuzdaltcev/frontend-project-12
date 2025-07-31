@@ -130,9 +130,10 @@ const Signup = () => {
             {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('signup.username')}</Form.Label>
+                  <Form.Label htmlFor="username">{t('signup.username')}</Form.Label>
                   <Form.Control
                     type="text"
+                    id="username"
                     name="username"
                     placeholder={t('signup.usernamePlaceholder')}
                     value={values.username}
@@ -146,9 +147,10 @@ const Signup = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('signup.password')}</Form.Label>
+                  <Form.Label htmlFor="password">{t('signup.password')}</Form.Label>
                   <Form.Control
                     type="password"
+                    id="password"
                     name="password"
                     placeholder={t('signup.passwordPlaceholder')}
                     value={values.password}
@@ -162,9 +164,10 @@ const Signup = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-4">
-                  <Form.Label>{t('signup.confirmPassword')}</Form.Label>
+                  <Form.Label htmlFor="confirmPassword">{t('signup.confirmPassword')}</Form.Label>
                   <Form.Control
                     type="password"
+                    id="confirmPassword"
                     name="confirmPassword"
                     placeholder={t('signup.confirmPasswordPlaceholder')}
                     value={values.confirmPassword}
