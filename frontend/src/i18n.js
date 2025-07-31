@@ -101,6 +101,10 @@ const resources = {
       'messages.validation.empty': 'Сообщение не может быть пустым',
       'messages.validation.tooLong': 'Сообщение слишком длинное',
       'messages.validation.required': 'Сообщение обязательно',
+      'messages.count_one': '{{count}} сообщение',
+      'messages.count_few': '{{count}} сообщения',
+      'messages.count_many': '{{count}} сообщений',
+      'messages.count': '{{count}} сообщений',
 
       // Фильтрация нецензурных слов
       'profanity.error.containsProfanity': 'Текст содержит нецензурные слова',

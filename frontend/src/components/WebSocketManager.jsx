@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addMessageFromSocket, setSocketStatus } from '../slices/messagesSlice';
 import { updateChannelsFromSocket } from '../slices/channelsSlice';
 import socketService from '../services/socketService';
-import { useNotifications } from './NotificationManager';
 
 const WebSocketManager = () => {
   const dispatch = useDispatch();
-  const { showConnected, showDisconnected, showConnecting } = useNotifications();
-  const token = localStorage.getItem('token');
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    
     if (!token) {
       return;
     }
@@ -18,7 +17,7 @@ const WebSocketManager = () => {
     // Подключаемся к WebSocket
     const socket = socketService.connect(token);
 
-    // Обработчик новых сообщений
+    // Обработчик новых сообщений - обновляем состояние React
     const handleNewMessage = (message) => {
       dispatch(addMessageFromSocket(message));
     };
@@ -32,31 +31,23 @@ const WebSocketManager = () => {
     socketService.onNewMessage(handleNewMessage);
     socketService.onChannelUpdate(handleChannelUpdate);
 
-    // Обновляем статус соединения
-    const updateConnectionStatus = () => {
-      dispatch(setSocketStatus(socketService.getConnectionStatus()));
-    };
-
-    // Обработчики событий соединения с уведомлениями
+    // Обработчики событий соединения
     const handleConnect = () => {
-      updateConnectionStatus();
-      showConnected();
+      dispatch(setSocketStatus(true));
     };
 
     const handleDisconnect = () => {
-      updateConnectionStatus();
-      showDisconnected();
+      dispatch(setSocketStatus(false));
     };
 
-    const handleConnecting = () => {
-      updateConnectionStatus();
-      showConnecting();
+    const handleReconnect = () => {
+      // Переподключение обработано автоматически
     };
 
     // Обновляем статус при подключении/отключении
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
-    socket.on('connecting', handleConnecting);
+    socket.on('reconnect', handleReconnect);
 
     // Очистка при размонтировании
     return () => {
@@ -64,9 +55,9 @@ const WebSocketManager = () => {
       socketService.off('channelUpdate', handleChannelUpdate);
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
-      socket.off('connecting', handleConnecting);
+      socket.off('reconnect', handleReconnect);
     };
-  }, [dispatch, token, showConnected, showDisconnected, showConnecting]);
+  }, [dispatch]);
 
   // Компонент не рендерит ничего видимого
   return null;

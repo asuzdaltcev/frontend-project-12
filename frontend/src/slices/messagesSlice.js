@@ -3,6 +3,8 @@ import axios from 'axios';
 import socketService from '../services/socketService';
 import profanityFilter from '../utils/profanityFilter';
 
+
+
 // Асинхронное действие для получения сообщений
 export const fetchMessages = createAsyncThunk(
   'messages/fetchMessages',
@@ -36,36 +38,37 @@ export const addMessage = createAsyncThunk(
       const token = localStorage.getItem('token');
       const username = localStorage.getItem('username');
       
-      // Сначала подключаемся к WebSocket если не подключены
-      if (!socketService.getConnectionStatus()) {
-        socketService.connect(token);
+      if (!token || !username) {
+        return rejectWithValue('Не авторизован');
       }
 
-      // Отправляем сообщение через WebSocket
-      const message = {
-        body,
-        channelId,
-        username
-      };
-
-      const response = await socketService.sendMessage(message);
-      return response;
+      // Используем HTTP API как основной способ (надежнее)
+      const response = await axios.post('/api/v1/messages', 
+        { body, channelId, username },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
     } catch (error) {
-      // Если WebSocket не работает, используем HTTP
+      // Если HTTP не работает, пробуем WebSocket как fallback
       try {
-        const token = localStorage.getItem('token');
-        const username = localStorage.getItem('username');
-        const response = await axios.post('/api/v1/messages', 
-          { body, channelId, username },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        return response.data;
-      } catch (httpError) {
-        return rejectWithValue(httpError.response?.data || 'Ошибка отправки сообщения');
+        if (!socketService.getConnectionStatus()) {
+          socketService.connect(localStorage.getItem('token'));
+        }
+
+        const message = {
+          body,
+          channelId,
+          username: localStorage.getItem('username')
+        };
+
+        const response = await socketService.sendMessage(message);
+        return response;
+      } catch (socketError) {
+        return rejectWithValue(error.response?.data || 'Ошибка отправки сообщения');
       }
     }
   }

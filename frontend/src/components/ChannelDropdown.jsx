@@ -61,6 +61,7 @@ const ChannelDropdown = ({
         name={channel.name}
         aria-label={channel.name}
       >
+        <span className="me-1">#</span>
         {channel.name}
       </button>
       

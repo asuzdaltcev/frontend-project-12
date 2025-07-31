@@ -11,7 +11,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { showNetworkError, showLoadingError } = useNotifications();
-  const { channels, loading: channelsLoading, error: channelsError } = useSelector(state => state.channels);
+  const { channels, currentChannelId, loading: channelsLoading, error: channelsError } = useSelector(state => state.channels);
   const { messages, loading: messagesLoading, error: messagesError } = useSelector(state => state.messages);
 
   useEffect(() => {
@@ -42,7 +42,8 @@ const Home = () => {
 
   // Автоматически выбираем канал по умолчанию при загрузке
   useEffect(() => {
-    if (channels.length > 0) {
+    // Выбираем канал только если он еще не выбран И каналы загружены
+    if (channels.length > 0 && !currentChannelId) {
       // Сначала ищем канал general
       const generalChannel = channels.find(channel => 
         channel.name.toLowerCase() === 'general'
@@ -54,7 +55,9 @@ const Home = () => {
         dispatch(setCurrentChannel(channels[0].id));
       }
     }
-  }, [channels, dispatch]);
+  }, [channels, currentChannelId, dispatch]);
+
+
 
   if (channelsLoading || messagesLoading) {
     return (

@@ -3,16 +3,13 @@ import { Row, Col, Card } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { setCurrentChannel } from '../slices/channelsSlice';
 import ChannelList from './ChannelList';
-import MessageList from './MessageList';
+import Messages from './Messages';
 import MessageForm from './MessageForm';
 
 const ChatInterface = ({ channels, messages }) => {
   const dispatch = useDispatch();
   const currentChannelId = useSelector(state => state.channels.currentChannelId);
   const currentChannel = channels.find(channel => channel.id === currentChannelId);
-
-  // Фильтруем сообщения для текущего канала
-  const currentMessages = messages.filter(message => message.channelId === currentChannelId);
 
   const handleChannelSelect = (channelId) => {
     dispatch(setCurrentChannel(channelId));
@@ -41,7 +38,7 @@ const ChatInterface = ({ channels, messages }) => {
               <h2 className="mb-0 fs-5">{currentChannel ? `# ${currentChannel.name}` : 'Выберите канал'}</h2>
             </Card.Header>
             <Card.Body className="chat-content d-flex flex-column p-0">
-              <MessageList messages={currentMessages} />
+              <Messages messages={messages} activeChannelId={currentChannelId} channels={channels} />
               <MessageForm channelId={currentChannelId} />
             </Card.Body>
           </Card>

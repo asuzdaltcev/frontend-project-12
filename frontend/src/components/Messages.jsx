@@ -1,20 +1,27 @@
 import React, { useRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { useTranslation } from 'react-i18next';
 
-const Messages = ({ messages = [], currentChannelId }) => {
-  const messagesEndRef = useRef(null);
+const Messages = ({ messages = [], activeChannelId, channels = [] }) => {
+  const { t } = useTranslation();
+  const messagesRef = useRef(null);
 
   // Мемоизируем отфильтрованные сообщения для текущего канала
   const channelMessages = useMemo(() => {
-    return messages.filter(message => message.channelId === currentChannelId);
-  }, [messages, currentChannelId]);
+    if (!activeChannelId) return [];
+    // Приводим оба значения к строке для надежного сравнения
+    const activeChannelIdStr = String(activeChannelId);
+    const filtered = messages.filter(message => String(message.channelId) === activeChannelIdStr);
+    return filtered;
+  }, [messages, activeChannelId]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Находим текущий канал
+  const currentChannel = useMemo(() => {
+    return channels.find(channel => String(channel.id) === String(activeChannelId));
+  }, [channels, activeChannelId]);
 
   useEffect(() => {
-    scrollToBottom();
+    messagesRef.current?.lastChild?.scrollIntoView({ behavior: 'smooth' });
   }, [channelMessages]);
 
   // Проверяем, что messages является массивом
@@ -27,33 +34,50 @@ const Messages = ({ messages = [], currentChannelId }) => {
     );
   }
 
-  return (
-    <div id="messages-box" className="chat-messages overflow-auto px-5">
-      {channelMessages.length === 0 ? (
+  if (!currentChannel) {
+    return (
+      <div className="d-flex flex-column h-100">
         <div className="text-muted text-center py-4">
-          Нет сообщений в этом канале
+          Выберите канал для просмотра сообщений
         </div>
-      ) : (
-        channelMessages.map(message => (
-          <div className="text-break mb-2" key={message.id}>
-            <b>{message.username}</b>
-            {`: ${message.body}`}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="bg-light mb-4 p-3 shadow-sm small">
+        <p className="m-0">
+          <b>
+            #{currentChannel.name}
+          </b>
+        </p>
+        <span className="text-muted">
+          {t('messages.count', { count: channelMessages.length })}
+        </span>
+      </div>
+      <div id="messages-box" className="chat-messages overflow-auto px-5" ref={messagesRef}>
+        {channelMessages.length === 0 ? (
+          <div className="text-muted text-center py-4">
+            Нет сообщений в этом канале
           </div>
-        ))
-      )}
-      <div ref={messagesEndRef} />
-    </div>
+        ) : (
+          channelMessages.map(message => (
+            <div className="text-break mb-2" key={message.id}>
+              <b>{message.username}</b>
+              : {message.body}
+            </div>
+          ))
+        )}
+      </div>
+    </>
   );
 };
 
 Messages.propTypes = {
-  messages: PropTypes.array.isRequired,
-  currentChannelId: PropTypes.number
-};
-
-Messages.defaultProps = {
-  messages: [],
-  currentChannelId: null
+  messages: PropTypes.array,
+  activeChannelId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  channels: PropTypes.array
 };
 
 export default Messages; 
