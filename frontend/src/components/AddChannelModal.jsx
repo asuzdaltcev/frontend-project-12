@@ -33,10 +33,7 @@ const AddChannelModal = ({ show, onHide }) => {
         );
         return !isDuplicate;
       })
-      .test('profanity', t('profanity.error.channelNameProfanity'), function(value) {
-        if (!value) return true; // Пропускаем пустые значения
-        return !profanityFilter.check(value);
-      }),
+
   }), [t, existingChannels]);
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {

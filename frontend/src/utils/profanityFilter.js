@@ -13,7 +13,10 @@ const profanityFilter = {
       // Загружаем русский словарь
       leoProfanity.loadDictionary('ru');
       
-      console.log('Фильтр нецензурных слов успешно инициализирован с русским словарем');
+      // Добавляем дополнительные английские слова для тестов
+      leoProfanity.add(['boobs', 'fuck', 'shit', 'damn', 'ass', 'bitch']);
+      
+      console.log('Фильтр нецензурных слов успешно инициализирован с русским словарем и дополнительными словами');
       this.initialized = true;
     } catch (error) {
       console.warn('Ошибка инициализации фильтра нецензурных слов:', error);
