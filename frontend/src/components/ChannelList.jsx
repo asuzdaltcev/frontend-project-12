@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import AddChannelModal from './AddChannelModal';
+import RenameChannelModal from './RenameChannelModal';
 import ChannelDropdown from './ChannelDropdown';
 import './ChannelList.css';
 
 const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [channelToRename, setChannelToRename] = useState(null);
   
-  // Отладка: логируем каналы
-  console.log('ChannelList: All channels:', channels.map(c => ({ id: c.id, name: c.name, removable: c.removable })));
-
-
   // Проверяем, является ли канал системным (general или random)
   const isSystemChannel = (channelName) => {
     return channelName === 'general' || channelName === 'random';
@@ -43,9 +42,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
 
   // Обработчики для действий с каналами
   const handleRenameChannel = (channel) => {
-    // Заглушка для переименования канала
-    // В реальном приложении здесь будет открытие модального окна
-    alert(`Переименование канала: ${channel.name}`);
+    setChannelToRename(channel);
+    setShowRenameModal(true);
   };
 
   const handleRemoveChannel = (channel) => {
@@ -83,36 +81,39 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
             const isSystem = isSystemChannel(channel.name);
             const isActive = channel.id === currentChannelId;
             
-            // Отладка: логируем каждый канал
-            console.log(`Channel: ${channel.name}, isSystem: ${isSystem}, removable: ${channel.removable}, id: ${channel.id}`);
+            // Отладка убрана, используем общий alert выше
     
             
             return (
               <li key={`${channel.id}-${channel.name}`} className="nav-item w-100">
-                {isSystem ? (
-                  // Системные каналы - простая кнопка без dropdown
-                  <button
-                    type="button"
-                    className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-secondary' : ''}`}
-                    onClick={() => onChannelSelect(channel.id)}
-                    name={channel.name}
-                    aria-label={channel.name}
-                    role="button"
-                  >
-                    {channel.name}
-                  </button>
-                ) : (
-                  // Пользовательские каналы - с dropdown
-                  <ChannelDropdown 
-                    channel={channel}
-                    isActive={isActive}
-                    isRemovable={channel.removable !== false}
-                    isRenamable={channel.removable !== false}
-                    onSelect={onChannelSelect}
-                    onRename={handleRenameChannel}
-                    onRemove={handleRemoveChannel}
-                  />
-                )}
+{(() => {
+                  if (isSystem) {
+                    return (
+                      <button
+                        type="button"
+                        className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-secondary' : ''}`}
+                        onClick={() => onChannelSelect(channel.id)}
+                        name={channel.name}
+                        aria-label={channel.name}
+                        role="button"
+                      >
+                        {channel.name}
+                      </button>
+                    );
+                  } else {
+                    return (
+                      <ChannelDropdown 
+                        channel={channel}
+                        isActive={isActive}
+                        isRemovable={channel.removable !== false}
+                        isRenamable={channel.removable !== false}
+                        onSelect={onChannelSelect}
+                        onRename={handleRenameChannel}
+                        onRemove={handleRemoveChannel}
+                      />
+                    );
+                  }
+                })()}
               </li>
             );
           })
@@ -122,6 +123,15 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
       <AddChannelModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
+      />
+
+      <RenameChannelModal
+        show={showRenameModal}
+        onHide={() => {
+          setShowRenameModal(false);
+          setChannelToRename(null);
+        }}
+        channel={channelToRename}
       />
     </>
   );

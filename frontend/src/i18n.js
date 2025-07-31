@@ -121,7 +121,7 @@ const resources = {
       'notifications.error.loading': 'Ошибка загрузки данных. Попробуйте обновить страницу.',
       'notifications.error.unknown': 'Произошла неизвестная ошибка.',
       'notifications.success.channelCreated': 'Канал создан',
-      'notifications.success.channelRenamed': 'Канал "{{name}}" успешно переименован',
+      'notifications.success.channelRenamed': 'Канал переименован',
       'notifications.success.channelRemoved': 'Канал "{{name}}" успешно удален',
       'notifications.success.messageSent': 'Сообщение отправлено',
       'notifications.info.connecting': 'Подключение к серверу...',

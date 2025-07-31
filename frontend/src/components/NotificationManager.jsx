@@ -61,7 +61,7 @@ export const useNotifications = () => {
   };
 
   const showChannelRenamed = (channelName) => {
-    showSuccess(t('notifications.success.channelRenamed', { name: channelName }));
+    showSuccess(t('notifications.success.channelRenamed'));
   };
 
   const showChannelRemoved = (channelName) => {

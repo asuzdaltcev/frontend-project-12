@@ -72,6 +72,8 @@ const ChannelDropdown = ({
           onClick={handleToggle}
           aria-expanded={isOpen}
           aria-label="Управление каналом"
+          data-testid="channel-management-button"
+
         >
           <span className="visually-hidden">Управление каналом</span>
         </button>

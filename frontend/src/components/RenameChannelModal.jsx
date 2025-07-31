@@ -29,10 +29,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         );
         return !isDuplicate;
       })
-      .test('profanity', t('profanity.error.channelNameProfanity'), function(value) {
-        if (!value) return true; // Пропускаем пустые значения
-        return !profanityFilter.check(value);
-      }),
+
   }), [t, existingChannels, channel]);
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
@@ -40,13 +37,10 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       // Проверяем на нецензурные слова перед отправкой
       const profanityResult = profanityFilter.process(values.name);
       
-      if (profanityResult.hasProfanity) {
-        setFieldError('name', t('profanity.error.channelNameProfanity'));
-        showError(t('profanity.error.channelNameProfanity'));
-        return;
-      }
+      // Используем очищенное имя канала (с заменой нецензурных слов на звездочки)
+      const channelName = profanityResult.hasProfanity ? profanityResult.cleanedText : values.name;
 
-      const result = await dispatch(renameChannel({ id: channel.id, name: values.name })).unwrap();
+      const result = await dispatch(renameChannel({ id: channel.id, name: channelName })).unwrap();
       showChannelRenamed(values.name);
       resetForm();
       onHide();
