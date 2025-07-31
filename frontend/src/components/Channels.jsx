@@ -35,7 +35,7 @@ function Channels({
             </Nav.Item>
           )
         : (
-            channels.map((channel) => (
+            channels.map(channel => (
               <Nav.Item className="w-100" as="li" key={channel.id}>
                 {channel.removable
                   ? (
@@ -113,4 +113,4 @@ Channels.defaultProps = {
   t: null,
 }
 
-export default Channels 
+export default Channels

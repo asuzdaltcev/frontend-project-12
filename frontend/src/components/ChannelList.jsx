@@ -149,4 +149,4 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
   )
 }
 
-export default ChannelList 
+export default ChannelList

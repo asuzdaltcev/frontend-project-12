@@ -121,4 +121,4 @@ const MessageForm = ({ channelId }) => {
   )
 }
 
-export default MessageForm 
+export default MessageForm

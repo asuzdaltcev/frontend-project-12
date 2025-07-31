@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import { Badge } from 'react-bootstrap'
 
 const ConnectionStatus = () => {
-  const socketConnected = useSelector((state) => state.messages.socketConnected)
+  const socketConnected = useSelector(state => state.messages.socketConnected)
 
   return (
     <Badge
@@ -25,4 +25,4 @@ const ConnectionStatus = () => {
   )
 }
 
-export default ConnectionStatus 
+export default ConnectionStatus

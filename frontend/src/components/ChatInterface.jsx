@@ -7,8 +7,8 @@ import MessageForm from './MessageForm'
 
 const ChatInterface = ({ channels, messages }) => {
   const dispatch = useDispatch()
-  const currentChannelId = useSelector((state) => state.channels.currentChannelId)
-  const currentChannel = channels.find((channel) => channel.id === currentChannelId)
+  const currentChannelId = useSelector(state => state.channels.currentChannelId)
+  const currentChannel = channels.find(channel => channel.id === currentChannelId)
 
   const handleChannelSelect = (channelId) => {
     dispatch(setCurrentChannel(channelId))
@@ -47,4 +47,4 @@ const ChatInterface = ({ channels, messages }) => {
   )
 }
 
-export default ChatInterface 
+export default ChatInterface
