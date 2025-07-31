@@ -1,27 +1,27 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
-import { removeChannel } from '../slices/channelsSlice';
-import { useTranslation } from 'react-i18next';
-import { useNotifications } from './NotificationManager';
+import { Modal, Button } from 'react-bootstrap'
+import { useDispatch } from 'react-redux'
+import { removeChannel } from '../slices/channelsSlice'
+import { useTranslation } from 'react-i18next'
+import { useNotifications } from './NotificationManager'
 
 const RemoveChannelModal = ({ show, onHide, channel }) => {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const { showChannelRemoved, showError } = useNotifications();
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const { showChannelRemoved, showError } = useNotifications()
 
   const handleRemove = async () => {
     try {
-      await dispatch(removeChannel(channel.id)).unwrap();
-      showChannelRemoved();
-      onHide();
-    } catch (error) {
-      console.error('Ошибка удаления канала:', error);
-      showError(error?.message || t('channels.error.remove'));
+      await dispatch(removeChannel(channel.id)).unwrap()
+      showChannelRemoved()
+      onHide()
     }
-  };
+    catch (error) {
+      console.error('Ошибка удаления канала:', error)
+      showError(error?.message || t('channels.error.remove'))
+    }
+  }
 
-  if (!channel) return null;
+  if (!channel) return null
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -45,7 +45,7 @@ const RemoveChannelModal = ({ show, onHide, channel }) => {
         </Button>
       </Modal.Footer>
     </Modal>
-  );
-};
+  )
+}
 
-export default RemoveChannelModal; 
+export default RemoveChannelModal

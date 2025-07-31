@@ -1,18 +1,18 @@
-import React, { useMemo } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { renameChannel } from '../slices/channelsSlice';
-import { useTranslation } from 'react-i18next';
-import { useNotifications } from './NotificationManager';
-import profanityFilter from '../utils/profanityFilter';
+import { useMemo } from 'react'
+import { Modal, Button, Form } from 'react-bootstrap'
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux'
+import { renameChannel } from '../slices/channelsSlice'
+import { useTranslation } from 'react-i18next'
+import { useNotifications } from './NotificationManager'
+import profanityFilter from '../utils/profanityFilter'
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const { showChannelRenamed, showError, showWarning } = useNotifications();
-  const existingChannels = useSelector(state => state.channels.channels);
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const { showChannelRenamed, showError } = useNotifications()
+  const existingChannels = useSelector(state => state.channels.channels)
 
   const validationSchema = useMemo(() => Yup.object({
     name: Yup.string()
@@ -20,45 +20,48 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       .max(20, t('channels.validation.nameLength'))
       .matches(/^[a-zA-Z0-9\s-]+$/, t('channels.validation.nameFormat'))
       .required(t('channels.validation.nameRequired'))
-      .test('unique', t('channels.validation.nameUnique'), function(value) {
-        if (!value) return true; // Пропускаем пустые значения, их обработает required
-        const normalizedValue = value.trim().toLowerCase();
-        const isDuplicate = existingChannels.some(existingChannel => 
-          existingChannel.id !== channel?.id && // Исключаем текущий канал
-          existingChannel.name.toLowerCase() === normalizedValue
-        );
-        return !isDuplicate;
-      })
+      .test('unique', t('channels.validation.nameUnique'), function (value) {
+        if (!value) return true // Пропускаем пустые значения, их обработает required
+        const normalizedValue = value.trim().toLowerCase()
+        const isDuplicate = existingChannels.some(existingChannel =>
+          existingChannel.id !== channel?.id // Исключаем текущий канал
+          && existingChannel.name.toLowerCase() === normalizedValue,
+        )
+        return !isDuplicate
+      }),
 
-  }), [t, existingChannels, channel]);
+  }), [t, existingChannels, channel])
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
       // Проверяем на нецензурные слова перед отправкой
-      const profanityResult = profanityFilter.process(values.name);
-      
-      // Используем очищенное имя канала (с заменой нецензурных слов на звездочки)
-      const channelName = profanityResult.hasProfanity ? profanityResult.cleanedText : values.name;
+      const profanityResult = profanityFilter.process(values.name)
 
-      const result = await dispatch(renameChannel({ id: channel.id, name: channelName })).unwrap();
-      showChannelRenamed(values.name);
-      resetForm();
-      onHide();
-    } catch (error) {
-      console.error('Ошибка переименования канала:', error);
+      // Используем очищенное имя канала (с заменой нецензурных слов на звездочки)
+      const channelName = profanityResult.hasProfanity ? profanityResult.cleanedText : values.name
+
+      await dispatch(renameChannel({ id: channel.id, name: channelName })).unwrap()
+      showChannelRenamed(values.name)
+      resetForm()
+      onHide()
+    }
+    catch (error) {
+      console.error('Ошибка переименования канала:', error)
       // Обрабатываем серверные ошибки
       if (error?.message?.includes('уже существует')) {
-        setFieldError('name', t('channels.validation.nameUnique'));
-      } else {
-        setFieldError('name', error?.message || t('channels.error.rename'));
-        showError(error?.message || t('channels.error.rename'));
+        setFieldError('name', t('channels.validation.nameUnique'))
       }
-    } finally {
-      setSubmitting(false);
+      else {
+        setFieldError('name', error?.message || t('channels.error.rename'))
+        showError(error?.message || t('channels.error.rename'))
+      }
     }
-  };
+    finally {
+      setSubmitting(false)
+    }
+  }
 
-  if (!channel) return null;
+  if (!channel) return null
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -98,7 +101,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         )}
       </Formik>
     </Modal>
-  );
-};
+  )
+}
 
-export default RenameChannelModal; 
+export default RenameChannelModal

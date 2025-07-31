@@ -1,5 +1,5 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
 // Ресурсы переводов
 const resources = {
@@ -126,7 +126,7 @@ const resources = {
       'notifications.error.unknown': 'Произошла неизвестная ошибка.',
       'notifications.success.channelCreated': 'Канал создан',
       'notifications.success.channelRenamed': 'Канал переименован',
-              'notifications.success.channelRemoved': 'Канал удалён',
+      'notifications.success.channelRemoved': 'Канал удалён',
       'notifications.success.messageSent': 'Сообщение отправлено',
       'notifications.info.connecting': 'Подключение к серверу...',
       'notifications.info.connected': 'Подключение восстановлено',
@@ -149,7 +149,7 @@ const resources = {
       'notFound.back': 'Вернуться на главную',
     },
   },
-};
+}
 
 // Конфигурация i18next
 i18n
@@ -164,6 +164,6 @@ i18n
     react: {
       useSuspense: false, // Отключаем Suspense для совместимости
     },
-  });
+  })
 
-export default i18n; 
+export default i18n
