@@ -1,18 +1,18 @@
-import React, { useMemo } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { useDispatch, useSelector } from 'react-redux';
-import { addChannel } from '../slices/channelsSlice';
-import { useTranslation } from 'react-i18next';
-import { useNotifications } from './NotificationManager';
-import profanityFilter from '../utils/profanityFilter';
+import { useMemo } from 'react'
+import { Modal, Button, Form } from 'react-bootstrap'
+import { Formik, Form as FormikForm, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { useDispatch, useSelector } from 'react-redux'
+import { addChannel } from '../slices/channelsSlice'
+import { useTranslation } from 'react-i18next'
+import { useNotifications } from './NotificationManager'
+import profanityFilter from '../utils/profanityFilter'
 
 const AddChannelModal = ({ show, onHide }) => {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const { showChannelCreated, showError, showWarning } = useNotifications();
-  const existingChannels = useSelector(state => state.channels.channels);
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const { showChannelCreated, showError } = useNotifications()
+  const existingChannels = useSelector(state => state.channels.channels)
 
   const validationSchema = useMemo(() => Yup.object({
     name: Yup.string()
@@ -20,47 +20,50 @@ const AddChannelModal = ({ show, onHide }) => {
       .max(20, t('channels.validation.nameLength'))
       .matches(/^[a-zA-Z0-9\s-]+$/, t('channels.validation.nameFormat'))
       .required(t('channels.validation.nameRequired'))
-      .test('system', 'Нельзя создать канал с именем системного канала', function(value) {
-        if (!value) return true;
-        const normalizedValue = value.trim().toLowerCase();
-        return normalizedValue !== 'general' && normalizedValue !== 'random';
+      .test('system', 'Нельзя создать канал с именем системного канала', function (value) {
+        if (!value) return true
+        const normalizedValue = value.trim().toLowerCase()
+        return normalizedValue !== 'general' && normalizedValue !== 'random'
       })
-      .test('unique', t('channels.validation.nameUnique'), function(value) {
-        if (!value) return true; // Пропускаем пустые значения, их обработает required
-        const normalizedValue = value.trim().toLowerCase();
-        const isDuplicate = existingChannels.some(channel => 
-          channel.name.toLowerCase() === normalizedValue
-        );
-        return !isDuplicate;
-      })
+      .test('unique', t('channels.validation.nameUnique'), function (value) {
+        if (!value) return true // Пропускаем пустые значения, их обработает required
+        const normalizedValue = value.trim().toLowerCase()
+        const isDuplicate = existingChannels.some(channel =>
+          channel.name.toLowerCase() === normalizedValue,
+        )
+        return !isDuplicate
+      }),
 
-  }), [t, existingChannels]);
+  }), [t, existingChannels])
 
   const handleSubmit = async (values, { setSubmitting, resetForm, setFieldError }) => {
     try {
       // Проверяем на нецензурные слова перед отправкой
-      const profanityResult = profanityFilter.process(values.name);
-      
-      // Используем очищенное имя канала (с заменой нецензурных слов на звездочки)
-      const channelName = profanityResult.hasProfanity ? profanityResult.cleanedText : values.name;
+      const profanityResult = profanityFilter.process(values.name)
 
-      const result = await dispatch(addChannel(channelName)).unwrap();
-      showChannelCreated(values.name);
-      resetForm();
-      onHide();
-    } catch (error) {
-      console.error('Ошибка создания канала:', error);
+      // Используем очищенное имя канала (с заменой нецензурных слов на звездочки)
+      const channelName = profanityResult.hasProfanity ? profanityResult.cleanedText : values.name
+
+      await dispatch(addChannel(channelName)).unwrap()
+      showChannelCreated(values.name)
+      resetForm()
+      onHide()
+    }
+    catch (error) {
+      console.error('Ошибка создания канала:', error)
       // Обрабатываем серверные ошибки
       if (error?.message?.includes('уже существует')) {
-        setFieldError('name', t('channels.validation.nameUnique'));
-      } else {
-        setFieldError('name', error?.message || t('channels.error.add'));
-        showError(error?.message || t('channels.error.add'));
+        setFieldError('name', t('channels.validation.nameUnique'))
       }
-    } finally {
-      setSubmitting(false);
+      else {
+        setFieldError('name', error?.message || t('channels.error.add'))
+        showError(error?.message || t('channels.error.add'))
+      }
     }
-  };
+    finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -100,7 +103,7 @@ const AddChannelModal = ({ show, onHide }) => {
         )}
       </Formik>
     </Modal>
-  );
-};
+  )
+}
 
-export default AddChannelModal; 
+export default AddChannelModal 
