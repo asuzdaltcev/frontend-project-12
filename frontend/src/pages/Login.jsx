@@ -81,9 +81,10 @@ const Login = () => {
             {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
-                  <Form.Label>{t('login.username')}</Form.Label>
+                  <Form.Label htmlFor="username">{t('login.username')}</Form.Label>
                   <Form.Control
                     type="text"
+                    id="username"
                     name="username"
                     placeholder={t('login.usernamePlaceholder')}
                     value={values.username}
@@ -97,9 +98,10 @@ const Login = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-4">
-                  <Form.Label>{t('login.password')}</Form.Label>
+                  <Form.Label htmlFor="password">{t('login.password')}</Form.Label>
                   <Form.Control
                     type="password"
+                    id="password"
                     name="password"
                     placeholder={t('login.passwordPlaceholder')}
                     value={values.password}
