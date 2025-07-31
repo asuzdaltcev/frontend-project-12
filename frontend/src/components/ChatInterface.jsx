@@ -1,19 +1,18 @@
-import React from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
-import { setCurrentChannel } from '../slices/channelsSlice';
-import ChannelList from './ChannelList';
-import Messages from './Messages';
-import MessageForm from './MessageForm';
+import { Row, Col, Card } from 'react-bootstrap'
+import { useSelector, useDispatch } from 'react-redux'
+import { setCurrentChannel } from '../slices/channelsSlice'
+import ChannelList from './ChannelList'
+import Messages from './Messages'
+import MessageForm from './MessageForm'
 
 const ChatInterface = ({ channels, messages }) => {
-  const dispatch = useDispatch();
-  const currentChannelId = useSelector(state => state.channels.currentChannelId);
-  const currentChannel = channels.find(channel => channel.id === currentChannelId);
+  const dispatch = useDispatch()
+  const currentChannelId = useSelector((state) => state.channels.currentChannelId)
+  const currentChannel = channels.find((channel) => channel.id === currentChannelId)
 
   const handleChannelSelect = (channelId) => {
-    dispatch(setCurrentChannel(channelId));
-  };
+    dispatch(setCurrentChannel(channelId))
+  }
 
   return (
     <div className="chat-interface w-100 h-100">
@@ -24,8 +23,8 @@ const ChatInterface = ({ channels, messages }) => {
               <h3 className="mb-0 fs-5">Каналы</h3>
             </Card.Header>
             <Card.Body className="p-0">
-              <ChannelList 
-                channels={channels} 
+              <ChannelList
+                channels={channels}
                 currentChannelId={currentChannelId}
                 onChannelSelect={handleChannelSelect}
               />
@@ -45,7 +44,7 @@ const ChatInterface = ({ channels, messages }) => {
         </Col>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default ChatInterface; 
+export default ChatInterface 

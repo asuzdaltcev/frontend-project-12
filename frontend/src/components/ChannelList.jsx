@@ -1,58 +1,60 @@
-import React, { useState } from 'react';
-import AddChannelModal from './AddChannelModal';
-import RenameChannelModal from './RenameChannelModal';
-import RemoveChannelModal from './RemoveChannelModal';
-import ChannelDropdown from './ChannelDropdown';
-import './ChannelList.css';
+import { useState } from 'react'
+import AddChannelModal from './AddChannelModal'
+import RenameChannelModal from './RenameChannelModal'
+import RemoveChannelModal from './RemoveChannelModal'
+import ChannelDropdown from './ChannelDropdown'
+import './ChannelList.css'
 
 const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showRenameModal, setShowRenameModal] = useState(false);
-  const [channelToRename, setChannelToRename] = useState(null);
-  const [showRemoveModal, setShowRemoveModal] = useState(false);
-  const [channelToRemove, setChannelToRemove] = useState(null);
-  
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showRenameModal, setShowRenameModal] = useState(false)
+  const [channelToRename, setChannelToRename] = useState(null)
+  const [showRemoveModal, setShowRemoveModal] = useState(false)
+  const [channelToRemove, setChannelToRemove] = useState(null)
+
   // Проверяем, является ли канал системным (general или random)
   const isSystemChannel = (channelName) => {
-    return channelName === 'general' || channelName === 'random';
-  };
+    return channelName === 'general' || channelName === 'random'
+  }
 
   // Дедуплицируем каналы по имени (для системных каналов берем системный)
   const uniqueChannels = channels.reduce((acc, channel) => {
-    const normalizedName = channel.name.toLowerCase();
-    
+    const normalizedName = channel.name.toLowerCase()
+
     // Для системных каналов берем только системный (removable: false)
     if (isSystemChannel(channel.name)) {
       if (!acc.has(normalizedName)) {
-        acc.set(normalizedName, channel);
-      } else {
+        acc.set(normalizedName, channel)
+      }
+      else {
         // Если уже есть канал с таким именем, заменяем на системный
-        const existingChannel = acc.get(normalizedName);
+        const existingChannel = acc.get(normalizedName)
         if (channel.removable === false && existingChannel.removable !== false) {
-          acc.set(normalizedName, channel);
+          acc.set(normalizedName, channel)
         }
       }
-    } else {
+    }
+    else {
       // Для пользовательских каналов дедуплицируем по ID
       if (!acc.has(channel.id)) {
-        acc.set(channel.id, channel);
+        acc.set(channel.id, channel)
       }
     }
-    return acc;
-  }, new Map()).values();
+    return acc
+  }, new Map()).values()
 
-  const uniqueChannelsArray = Array.from(uniqueChannels);
+  const uniqueChannelsArray = Array.from(uniqueChannels)
 
   // Обработчики для действий с каналами
   const handleRenameChannel = (channel) => {
-    setChannelToRename(channel);
-    setShowRenameModal(true);
-  };
+    setChannelToRename(channel)
+    setShowRenameModal(true)
+  }
 
   const handleRemoveChannel = (channel) => {
-    setChannelToRemove(channel);
-    setShowRemoveModal(true);
-  };
+    setChannelToRemove(channel)
+    setShowRemoveModal(true)
+  }
 
   return (
     <>
@@ -70,55 +72,55 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
           <span className="visually-hidden">+</span>
         </button>
       </div>
-      
+
       <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
-        {uniqueChannelsArray.length === 0 ? (
-          <li className="nav-item w-100 text-muted text-center">
-            Нет доступных каналов
-          </li>
-        ) : (
-          uniqueChannelsArray.map(channel => {
-            const isSystem = isSystemChannel(channel.name);
-            const isActive = channel.id === currentChannelId;
-            
-            // Отладка убрана, используем общий alert выше
-    
-            
-            return (
-              <li key={`${channel.id}-${channel.name}`} className="nav-item w-100">
-{(() => {
-                  if (isSystem) {
-                    return (
-                      <button
-                        type="button"
-                        className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-secondary' : ''}`}
-                        onClick={() => onChannelSelect(channel.id)}
-                        name={channel.name}
-                        aria-label={channel.name}
-                        role="button"
-                      >
-                        <span className="me-1">#</span>
-                        {channel.name}
-                      </button>
-                    );
-                  } else {
-                    return (
-                      <ChannelDropdown 
-                        channel={channel}
-                        isActive={isActive}
-                        isRemovable={channel.removable !== false}
-                        isRenamable={channel.removable !== false}
-                        onSelect={onChannelSelect}
-                        onRename={handleRenameChannel}
-                        onRemove={handleRemoveChannel}
-                      />
-                    );
-                  }
-                })()}
+        {uniqueChannelsArray.length === 0
+          ? (
+              <li className="nav-item w-100 text-muted text-center">
+                Нет доступных каналов
               </li>
-            );
-          })
-        )}
+            )
+          : (
+              uniqueChannelsArray.map((channel) => {
+                const isSystem = isSystemChannel(channel.name)
+                const isActive = channel.id === currentChannelId
+
+                return (
+                  <li key={`${channel.id}-${channel.name}`} className="nav-item w-100">
+                    {(() => {
+                      if (isSystem) {
+                        return (
+                          <button
+                            type="button"
+                            className={`w-100 rounded-0 text-start btn ${isActive ? 'btn-secondary' : ''}`}
+                            onClick={() => onChannelSelect(channel.id)}
+                            name={channel.name}
+                            aria-label={channel.name}
+                            role="button"
+                          >
+                            <span className="me-1">#</span>
+                            {channel.name}
+                          </button>
+                        )
+                      }
+                      else {
+                        return (
+                          <ChannelDropdown
+                            channel={channel}
+                            isActive={isActive}
+                            isRemovable={channel.removable !== false}
+                            isRenamable={channel.removable !== false}
+                            onSelect={onChannelSelect}
+                            onRename={handleRenameChannel}
+                            onRemove={handleRemoveChannel}
+                          />
+                        )
+                      }
+                    })()}
+                  </li>
+                )
+              })
+            )}
       </ul>
 
       <AddChannelModal
@@ -129,8 +131,8 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
       <RenameChannelModal
         show={showRenameModal}
         onHide={() => {
-          setShowRenameModal(false);
-          setChannelToRename(null);
+          setShowRenameModal(false)
+          setChannelToRename(null)
         }}
         channel={channelToRename}
       />
@@ -138,13 +140,13 @@ const ChannelList = ({ channels = [], currentChannelId, onChannelSelect }) => {
       <RemoveChannelModal
         show={showRemoveModal}
         onHide={() => {
-          setShowRemoveModal(false);
-          setChannelToRemove(null);
+          setShowRemoveModal(false)
+          setChannelToRemove(null)
         }}
         channel={channelToRemove}
       />
     </>
-  );
-};
+  )
+}
 
-export default ChannelList; 
+export default ChannelList 

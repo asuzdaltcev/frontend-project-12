@@ -1,53 +1,53 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react'
 
-const ChannelDropdown = ({ 
-  channel, 
-  onRename, 
-  onRemove, 
-  isRemovable = true, 
-  isRenamable = true, 
-  isActive = false, 
-  onSelect 
+const ChannelDropdown = ({
+  channel,
+  onRename,
+  onRemove,
+  isRemovable = true,
+  isRenamable = true,
+  isActive = false,
+  onSelect,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef();
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef()
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
+    }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   const handleToggle = (e) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
+    e.stopPropagation()
+    setIsOpen(!isOpen)
+  }
 
   const handleRename = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onRename(channel);
-    setIsOpen(false);
-  };
+    e.preventDefault()
+    e.stopPropagation()
+    onRename(channel)
+    setIsOpen(false)
+  }
 
   const handleRemove = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onRemove(channel);
-    setIsOpen(false);
-  };
+    e.preventDefault()
+    e.stopPropagation()
+    onRemove(channel)
+    setIsOpen(false)
+  }
 
   const handleChannelSelect = (e) => {
-    e.stopPropagation();
-    onSelect && onSelect(channel.id);
-  };
+    e.stopPropagation()
+    onSelect && onSelect(channel.id)
+  }
 
   return (
     <div className="d-flex dropdown btn-group w-100" ref={dropdownRef}>
@@ -64,7 +64,7 @@ const ChannelDropdown = ({
         <span className="me-1">#</span>
         {channel.name}
       </button>
-      
+
       {/* Кнопка выпадающего меню только если есть доступные действия */}
       {(isRemovable || isRenamable) && (
         <button
@@ -74,12 +74,11 @@ const ChannelDropdown = ({
           aria-expanded={isOpen}
           aria-label="Управление каналом"
           data-testid="channel-management-button"
-
         >
           <span className="visually-hidden">Управление каналом</span>
         </button>
       )}
-      
+
       {/* Выпадающее меню */}
       {isOpen && (isRemovable || isRenamable) && (
         <div className="dropdown-menu show">
@@ -104,7 +103,7 @@ const ChannelDropdown = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ChannelDropdown; 
+export default ChannelDropdown

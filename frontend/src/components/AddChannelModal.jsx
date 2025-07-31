@@ -106,4 +106,4 @@ const AddChannelModal = ({ show, onHide }) => {
   )
 }
 
-export default AddChannelModal 
+export default AddChannelModal
