@@ -44,13 +44,10 @@ const AddChannelModal = ({ show, onHide }) => {
       // Проверяем на нецензурные слова перед отправкой
       const profanityResult = profanityFilter.process(values.name);
       
-      if (profanityResult.hasProfanity) {
-        setFieldError('name', t('profanity.error.channelNameProfanity'));
-        showError(t('profanity.error.channelNameProfanity'));
-        return;
-      }
+      // Используем очищенное имя канала (с заменой нецензурных слов на звездочки)
+      const channelName = profanityResult.hasProfanity ? profanityResult.cleanedText : values.name;
 
-      const result = await dispatch(addChannel(values.name)).unwrap();
+      const result = await dispatch(addChannel(channelName)).unwrap();
       showChannelCreated(values.name);
       resetForm();
       onHide();
