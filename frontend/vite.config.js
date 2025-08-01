@@ -34,12 +34,11 @@ export default defineConfig({
           validation: ['yup'],
         },
         // Оптимизация имен файлов
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-          return `js/[name]-[hash].js`;
+        chunkFileNames: () => {
+          return `js/[name]-[hash].js`
         },
         entryFileNames: 'js/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
     // Увеличиваем лимит предупреждения о размере чанка
