@@ -1,17 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Form, Button, Alert, Card, Container } from 'react-bootstrap';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useTranslation } from 'react-i18next';
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { Form, Button, Alert, Card, Container } from 'react-bootstrap'
+import { Formik } from 'formik'
+import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 // Функция для создания системных каналов
 const createSystemChannels = async (token) => {
-  const systemChannels = ['general', 'random'];
-  
+  const systemChannels = ['general', 'random']
+
   for (const channelName of systemChannels) {
     try {
-
       const response = await fetch('/api/v1/channels', {
         method: 'POST',
         headers: {
@@ -19,26 +18,27 @@ const createSystemChannels = async (token) => {
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ name: channelName }),
-      });
-      
+      })
+
       if (response.ok) {
         // Канал создан успешно
-      } else if (response.status === 409) {
-        // Канал уже существует - это нормально
-      } else {
-        console.warn(`Не удалось создать канал ${channelName}:`, response.status);
       }
-    } catch (error) {
-      console.warn(`Ошибка создания канала ${channelName}:`, error);
+      else if (response.status === 409) {
+        // Канал уже существует - это нормально
+      }
+      else {
+        console.warn(`Не удалось создать канал ${channelName}:`, response.status)
+      }
+    }
+    catch (error) {
+      console.warn(`Ошибка создания канала ${channelName}:`, error)
     }
   }
-};
+}
 
 const Signup = () => {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-  const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation()
+  const [error, setError] = useState('')
 
   // Схема валидации с использованием переводов
   const validationSchema = Yup.object({
@@ -52,13 +52,10 @@ const Signup = () => {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password'), null], t('signup.validation.confirmPassword.match'))
       .required(t('signup.validation.confirmPassword.required')),
-  });
+  })
 
   const handleSubmit = async (values, { setSubmitting }) => {
-
-
-    setIsSubmitting(true);
-    setError('');
+    setError('')
 
     try {
       const response = await fetch('/api/v1/signup', {
@@ -70,40 +67,43 @@ const Signup = () => {
           username: values.username,
           password: values.password,
         }),
-      });
-
-      
+      })
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('username', values.username);
-        
+        const data = await response.json()
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('username', values.username)
+
         // Создаем системные каналы если их нет
         try {
-          await createSystemChannels(data.token);
-        } catch (channelError) {
-          console.warn('Не удалось создать системные каналы:', channelError);
+          await createSystemChannels(data.token)
+        }
+        catch (channelError) {
+          console.warn('Не удалось создать системные каналы:', channelError)
         }
         // Принудительное обновление для обновления состояния авторизации
-        window.location.href = '/';
-      } else {
-        const errorData = await response.json();
+        window.location.href = '/'
+      }
+      else {
+        await response.json()
         if (response.status === 409) {
-          setError(t('signup.error.userExists'));
-        } else if (response.status === 400) {
-          setError(t('signup.error.validation'));
-        } else {
-          setError(t('signup.error.general'));
+          setError(t('signup.error.userExists'))
+        }
+        else if (response.status === 400) {
+          setError(t('signup.error.validation'))
+        }
+        else {
+          setError(t('signup.error.general'))
         }
       }
-    } catch (err) {
-      setError(t('signup.error.general'));
-    } finally {
-      setIsSubmitting(false);
-      setSubmitting(false);
     }
-  };
+    catch {
+      setError(t('signup.error.general'))
+    }
+    finally {
+      setSubmitting(false)
+    }
+  }
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
@@ -184,22 +184,25 @@ const Signup = () => {
                   type="submit"
                   variant="primary"
                   className="w-100 mb-3"
-                  disabled={isSubmitting || isSubmitting}
+                  disabled={isSubmitting}
                 >
-                  {isSubmitting || isSubmitting ? t('signup.submitting') : t('signup.submit')}
+                  {isSubmitting ? t('signup.submitting') : t('signup.submit')}
                 </Button>
               </Form>
             )}
           </Formik>
 
           <div className="text-center">
-            <span className="text-muted">{t('signup.hasAccount')} </span>
+            <span className="text-muted">
+              {t('signup.hasAccount')}
+              {' '}
+            </span>
             <Link to="/login">{t('signup.loginLink')}</Link>
           </div>
         </Card.Body>
       </Card>
     </Container>
-  );
-};
+  )
+}
 
-export default Signup; 
+export default Signup

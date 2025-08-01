@@ -29,4 +29,3 @@ createRoot(document.getElementById('root')).render(
 // Экспортируем утилиты для использования в других компонентах
 window.rollbarUtils = rollbarUtils
 window.store = store
-

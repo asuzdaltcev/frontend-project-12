@@ -1,63 +1,64 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchChannels, setCurrentChannel } from '../slices/channelsSlice';
-import { fetchMessages } from '../slices/messagesSlice';
-import ChatInterface from '../components/ChatInterface';
-import { Container, Alert, Spinner } from 'react-bootstrap';
-import { useNotifications } from '../components/NotificationManager';
-import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchChannels, setCurrentChannel } from '../slices/channelsSlice'
+import { fetchMessages } from '../slices/messagesSlice'
+import ChatInterface from '../components/ChatInterface'
+import { Container, Alert, Spinner } from 'react-bootstrap'
+import { useNotifications } from '../components/NotificationManager'
+import { useTranslation } from 'react-i18next'
 
 const Home = () => {
-  const dispatch = useDispatch();
-  const { t } = useTranslation();
-  const { showNetworkError, showLoadingError } = useNotifications();
-  const { channels, currentChannelId, loading: channelsLoading, error: channelsError } = useSelector(state => state.channels);
-  const { messages, loading: messagesLoading, error: messagesError } = useSelector(state => state.messages);
+  const dispatch = useDispatch()
+  const { t } = useTranslation()
+  const { showNetworkError, showLoadingError } = useNotifications()
+  const { channels, currentChannelId, loading: channelsLoading, error: channelsError } = useSelector(state => state.channels)
+  const { messages, loading: messagesLoading, error: messagesError } = useSelector(state => state.messages)
 
   useEffect(() => {
-    dispatch(fetchChannels());
-    dispatch(fetchMessages());
-  }, [dispatch]);
+    dispatch(fetchChannels())
+    dispatch(fetchMessages())
+  }, [dispatch])
 
   // Обработка ошибок загрузки данных
   useEffect(() => {
     if (channelsError) {
       if (channelsError === 'network_error') {
-        showNetworkError();
-      } else {
-        showLoadingError();
+        showNetworkError()
+      }
+      else {
+        showLoadingError()
       }
     }
-  }, [channelsError, showNetworkError, showLoadingError]);
+  }, [channelsError, showNetworkError, showLoadingError])
 
   useEffect(() => {
     if (messagesError) {
       if (messagesError === 'network_error') {
-        showNetworkError();
-      } else {
-        showLoadingError();
+        showNetworkError()
+      }
+      else {
+        showLoadingError()
       }
     }
-  }, [messagesError, showNetworkError, showLoadingError]);
+  }, [messagesError, showNetworkError, showLoadingError])
 
   // Автоматически выбираем канал по умолчанию при загрузке
   useEffect(() => {
     // Выбираем канал только если он еще не выбран И каналы загружены
     if (channels.length > 0 && !currentChannelId) {
       // Сначала ищем канал general
-      const generalChannel = channels.find(channel => 
-        channel.name.toLowerCase() === 'general'
-      );
+      const generalChannel = channels.find(channel =>
+        channel.name.toLowerCase() === 'general',
+      )
       if (generalChannel) {
-        dispatch(setCurrentChannel(generalChannel.id));
-      } else {
+        dispatch(setCurrentChannel(generalChannel.id))
+      }
+      else {
         // Если канала general нет, выбираем первый доступный
-        dispatch(setCurrentChannel(channels[0].id));
+        dispatch(setCurrentChannel(channels[0].id))
       }
     }
-  }, [channels, currentChannelId, dispatch]);
-
-
+  }, [channels, currentChannelId, dispatch])
 
   if (channelsLoading || messagesLoading) {
     return (
@@ -66,7 +67,7 @@ const Home = () => {
           <span className="visually-hidden">{t('common.loading')}</span>
         </Spinner>
       </Container>
-    );
+    )
   }
 
   if (channelsError || messagesError) {
@@ -80,14 +81,14 @@ const Home = () => {
           </button>
         </Alert>
       </Container>
-    );
+    )
   }
 
   return (
     <div className="chat-page">
       <ChatInterface channels={channels} messages={messages} />
     </div>
-  );
-};
+  )
+}
 
-export default Home; 
+export default Home
