@@ -49,5 +49,8 @@
     "html-webpack-plugin": "^5.5.0",
     "style-loader": "^3.3.0",
     "vite": "^4.5.0"
+  },
+  "overrides": {
+    "fast-jwt": "^5.0.6"
   }
 }

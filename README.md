@@ -1,5 +1,8 @@
 # Chat Application
 
+[![Actions Status](https://github.com/asuzdaltcev/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/asuzdaltcev/frontend-project-12/actions)
+[![Maintainability](https://qlty.sh/gh/asuzdaltcev/projects/frontend-project-12/maintainability.svg)](https://qlty.sh/gh/asuzdaltcev/projects/frontend-project-12)
+
 Современное React приложение для чата с полным набором функций.
 
 ## 🚀 Возможности

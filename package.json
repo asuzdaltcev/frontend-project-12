@@ -17,10 +17,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fastify/jwt": "^9.1.0",
     "@hexlet/chat-server": "^2.0.4",
     "axios": "^1.10.0",
     "bootstrap": "^5.3.7",
+    "fast-jwt": "^5.0.6",
     "react-bootstrap": "^2.10.10"
+  },
+  "overrides": {
+    "fast-jwt": "^5.0.6"
   },
   "bugs": {
     "url": "https://github.com/asuzdaltcev/frontend-project-12/issues"
