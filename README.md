@@ -3,6 +3,8 @@
 [![Actions Status](https://github.com/asuzdaltcev/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/asuzdaltcev/frontend-project-12/actions)
 [![Maintainability](https://qlty.sh/gh/asuzdaltcev/projects/frontend-project-12/maintainability.svg)](https://qlty.sh/gh/asuzdaltcev/projects/frontend-project-12)
 
+**🚀 [Живое приложение](https://chat-app-islf.onrender.com)**
+
 Современное React приложение для чата с полным набором функций.
 
 ## 🚀 Возможности
@@ -55,6 +57,11 @@ REACT_APP_GIT_BRANCH=main
 
 ## 🌐 Деплой
 
+### **🚀 Живое приложение:**
+
+**Chat Application развернуто и доступно по адресу:**
+**[https://chat-app-islf.onrender.com](https://chat-app-islf.onrender.com)**
+
 ### **Render (рекомендуется):**
 
 1. Загрузите код в GitHub
@@ -63,17 +70,9 @@ REACT_APP_GIT_BRANCH=main
 4. Подключите ваш GitHub репозиторий
 5. Настройте переменные окружения
 
-Подробная инструкция: [RENDER_SETUP.md](RENDER_SETUP.md)
-
-### **Другие платформы:**
-
-- **Heroku**: используйте `Procfile`
-- **Docker**: используйте `Dockerfile` (если есть)
-
 ## 📚 Документация
 
-- [Rollbar интеграция](ROLLBAR_FINAL_INTEGRATION.md) - мониторинг ошибок
-- [Настройка Render](RENDER_SETUP.md) - деплой на Render
+Документация по настройке и использованию приложения.
 
 ## 🔧 API Endpoints
 
@@ -112,4 +111,6 @@ frontend-project-12/
 
 ---
 
-**Готово к продакшену!** 🚀
+**🚀 Готово к продакшену!**
+
+**Приложение развернуто и доступно:** [https://chat-app-islf.onrender.com](https://chat-app-islf.onrender.com)
