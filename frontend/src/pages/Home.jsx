@@ -85,7 +85,7 @@ const Home = () => {
   }
 
   return (
-    <div className="chat-page">
+    <div className="row h-100 bg-white flex-md-row">
       <ChatInterface channels={channels} messages={messages} />
     </div>
   )

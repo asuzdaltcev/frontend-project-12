@@ -18,6 +18,7 @@ const ConnectionStatus = () => {
         fontSize: '0.875rem',
         fontWeight: 500,
         transition: 'all 0.3s ease',
+        display: 'none', // Скрываем индикатор
       }}
     >
       {socketConnected ? '🟢 Подключено' : '🟡 Отключено'}

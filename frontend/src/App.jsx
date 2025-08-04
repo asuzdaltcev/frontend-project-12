@@ -28,28 +28,34 @@ function App() {
   return (
     <I18nProvider>
       <Router>
-        <div className="App">
-          <Navigation />
-          <WebSocketManager />
-          <ConnectionStatus />
-          <NotificationManager />
-          <main className="main-content">
-            <Suspense fallback={<LoadingSpinner />}>
-              <Routes>
-                <Route
-                  path="/"
-                  element={(
-                    <PrivateRoute>
-                      <Home />
-                    </PrivateRoute>
-                  )}
-                />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </main>
+        <div className="h-100 bg-light">
+          <div className="h-100">
+            <div className="h-100" id="chat">
+              <div className="d-flex flex-column h-100">
+                <Navigation />
+                <WebSocketManager />
+                <ConnectionStatus />
+                <NotificationManager />
+                <main className="container h-100 my-4 overflow-hidden rounded shadow">
+                  <Suspense fallback={<LoadingSpinner />}>
+                    <Routes>
+                      <Route
+                        path="/"
+                        element={(
+                          <PrivateRoute>
+                            <Home />
+                          </PrivateRoute>
+                        )}
+                      />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/signup" element={<Signup />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </main>
+              </div>
+            </div>
+          </div>
         </div>
       </Router>
     </I18nProvider>

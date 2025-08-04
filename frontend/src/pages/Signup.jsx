@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Form, Button, Alert, Card, Container } from 'react-bootstrap'
+import { Form, Button, Alert } from 'react-bootstrap'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
@@ -106,102 +106,112 @@ const Signup = () => {
   }
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '60vh' }}>
-      <Card style={{ width: '400px' }}>
-        <Card.Body className="p-4">
-          <Card.Title className="text-center mb-4">
-            {t('signup.title')}
-          </Card.Title>
-          <Card.Subtitle className="text-center text-muted mb-4">
-            {t('signup.subtitle')}
-          </Card.Subtitle>
+    <div className="container-fluid h-100">
+      <div className="row justify-content-center align-content-center h-100">
+        <div className="col-12 col-md-8 col-xxl-6">
+          <div className="card shadow-sm">
+            <div className="card-body row p-5">
+              <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
+                <img 
+                  src="/avatar22.jpg" 
+                  className="rounded-circle" 
+                  alt="Регистрация"
+                  style={{ width: '150px', height: '150px' }}
+                />
+              </div>
+              <div className="col-12 col-md-6 mt-3 mt-md-0">
+                <h1 className="text-center mb-4">Регистрация</h1>
+                
+                {error && (
+                  <Alert variant="danger" className="mb-3">
+                    {error}
+                  </Alert>
+                )}
 
-          {error && (
-            <Alert variant="danger" className="mb-3">
-              {error}
-            </Alert>
-          )}
-
-          <Formik
-            initialValues={{ username: '', password: '', confirmPassword: '' }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-              <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label htmlFor="username">{t('signup.username')}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder={t('signup.usernamePlaceholder')}
-                    value={values.username}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.username && errors.username}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.username}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label htmlFor="password">{t('signup.password')}</Form.Label>
-                  <Form.Control
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder={t('signup.passwordPlaceholder')}
-                    value={values.password}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.password && errors.password}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.password}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Form.Group className="mb-4">
-                  <Form.Label htmlFor="confirmPassword">{t('signup.confirmPassword')}</Form.Label>
-                  <Form.Control
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    placeholder={t('signup.confirmPasswordPlaceholder')}
-                    value={values.confirmPassword}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.confirmPassword && errors.confirmPassword}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.confirmPassword}
-                  </Form.Control.Feedback>
-                </Form.Group>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="w-100 mb-3"
-                  disabled={isSubmitting}
+                <Formik
+                  initialValues={{ username: '', password: '', confirmPassword: '' }}
+                  validationSchema={validationSchema}
+                  onSubmit={handleSubmit}
                 >
-                  {isSubmitting ? t('signup.submitting') : t('signup.submit')}
-                </Button>
-              </Form>
-            )}
-          </Formik>
+                  {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+                    <Form onSubmit={handleSubmit}>
+                      <div className="form-floating mb-3">
+                        <input
+                          name="username"
+                          autoComplete="username"
+                          required
+                          placeholder="Ваш ник"
+                          id="username"
+                          className="form-control"
+                          value={values.username}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <label htmlFor="username">Ваш ник</label>
+                        {touched.username && errors.username && (
+                          <div className="text-danger small mt-1">{errors.username}</div>
+                        )}
+                      </div>
 
-          <div className="text-center">
-            <span className="text-muted">
-              {t('signup.hasAccount')}
-              {' '}
-            </span>
-            <Link to="/login">{t('signup.loginLink')}</Link>
+                      <div className="form-floating mb-3">
+                        <input
+                          name="password"
+                          autoComplete="new-password"
+                          required
+                          placeholder="Пароль"
+                          type="password"
+                          id="password"
+                          className="form-control"
+                          value={values.password}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <label htmlFor="password">Пароль</label>
+                        {touched.password && errors.password && (
+                          <div className="text-danger small mt-1">{errors.password}</div>
+                        )}
+                      </div>
+
+                      <div className="form-floating mb-4">
+                        <input
+                          name="confirmPassword"
+                          autoComplete="new-password"
+                          required
+                          placeholder="Подтвердите пароль"
+                          type="password"
+                          id="confirmPassword"
+                          className="form-control"
+                          value={values.confirmPassword}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                        />
+                        <label htmlFor="confirmPassword">Подтвердите пароль</label>
+                        {touched.confirmPassword && errors.confirmPassword && (
+                          <div className="text-danger small mt-1">{errors.confirmPassword}</div>
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-100 mb-3 btn btn-outline-primary"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? t('signup.submitting') : 'Регистрация'}
+                      </button>
+                    </Form>
+                  )}
+                </Formik>
+              </div>
+            </div>
+            <div className="card-footer p-4">
+              <div className="text-center">
+                <span>Есть аккаунт?</span> <Link to="/login">Войти</Link>
+              </div>
+            </div>
           </div>
-        </Card.Body>
-      </Card>
-    </Container>
+        </div>
+      </div>
+    </div>
   )
 }
 
