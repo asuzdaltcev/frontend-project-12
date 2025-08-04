@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { fetchChannels, setCurrentChannel } from '../slices/channelsSlice'
 import { fetchMessages } from '../slices/messagesSlice'
 import ChatInterface from '../components/ChatInterface'
-import { Container, Alert, Spinner } from 'react-bootstrap'
 import { useNotifications } from '../components/NotificationManager'
+import { Container, Alert, Spinner } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 
 const Home = () => {

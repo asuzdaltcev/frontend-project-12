@@ -1,8 +1,8 @@
-import { Modal, Button } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
+import { Modal, Button } from 'react-bootstrap'
 import { removeChannel } from '../slices/channelsSlice'
-import { useTranslation } from 'react-i18next'
 import { useNotifications } from './NotificationManager'
+import { useTranslation } from 'react-i18next'
 
 const RemoveChannelModal = ({ show, onHide, channel }) => {
   const dispatch = useDispatch()

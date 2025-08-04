@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Form, Button, Alert } from 'react-bootstrap'
+import { Form, Alert } from 'react-bootstrap'
 import { Formik } from 'formik'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
@@ -63,16 +63,16 @@ const Login = () => {
           <div className="card shadow-sm">
             <div className="card-body row p-5">
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-                <img 
-                  src="/login.jpg" 
-                  className="rounded-circle" 
+                <img
+                  src="/login.jpg"
+                  className="rounded-circle"
                   alt="Войти"
                   style={{ width: '150px', height: '150px' }}
                 />
               </div>
               <div className="col-12 col-md-6 mt-3 mt-md-0">
                 <h1 className="text-center mb-4">Войти</h1>
-                
+
                 {error && (
                   <Alert variant="danger" className="mb-3">
                     {error}
@@ -137,7 +137,9 @@ const Login = () => {
             </div>
             <div className="card-footer p-4">
               <div className="text-center">
-                <span>Нет аккаунта?</span> <Link to="/signup">Регистрация</Link>
+                <span>Нет аккаунта?</span>
+                {' '}
+                <Link to="/signup">Регистрация</Link>
               </div>
             </div>
           </div>

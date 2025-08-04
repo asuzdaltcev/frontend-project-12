@@ -1,9 +1,7 @@
 import { useRef, useEffect, useMemo } from 'react'
 import PropTypes from 'prop-types'
-import { useTranslation } from 'react-i18next'
 
 const Messages = ({ messages = [], activeChannelId, channels = [] }) => {
-  const { t } = useTranslation()
   const messagesRef = useRef(null)
 
   // Мемоизируем отфильтрованные сообщения для текущего канала
@@ -47,8 +45,18 @@ const Messages = ({ messages = [], activeChannelId, channels = [] }) => {
   return (
     <>
       <div className="bg-light mb-4 p-3 shadow-sm small">
-        <p className="m-0"><b># {currentChannel.name}</b></p>
-        <span className="text-muted">{channelMessages.length} сообщений</span>
+        <p className="m-0">
+          <b>
+            #
+            {' '}
+            {currentChannel.name}
+          </b>
+        </p>
+        <span className="text-muted">
+          {channelMessages.length}
+          {' '}
+          сообщений
+        </span>
       </div>
       <div id="messages-box" className="chat-messages overflow-auto px-5" ref={messagesRef}>
         {channelMessages.length === 0
