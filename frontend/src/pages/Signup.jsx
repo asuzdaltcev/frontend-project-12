@@ -140,14 +140,14 @@ const Signup = () => {
                           name="username"
                           autoComplete="username"
                           required
-                          placeholder="Ваш ник"
+                          placeholder="Имя пользователя"
                           id="username"
                           className="form-control"
                           value={values.username}
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
-                        <label htmlFor="username">Ваш ник</label>
+                        <label htmlFor="username">Имя пользователя</label>
                         {touched.username && errors.username && (
                           <div className="text-danger small mt-1">{errors.username}</div>
                         )}
@@ -166,7 +166,7 @@ const Signup = () => {
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
-                        <label htmlFor="password">Пароль</label>
+                        <label htmlFor="password">Пароль:</label>
                         {touched.password && errors.password && (
                           <div className="text-danger small mt-1">{errors.password}</div>
                         )}
